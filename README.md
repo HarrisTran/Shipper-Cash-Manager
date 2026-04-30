@@ -1,17 +1,36 @@
-# tintin_money
+# Shipper Cash Manager (SCM)
 
-A new Flutter project.
+Ứng dụng quản lý giao dịch và trạng thái shipper dành cho hệ thống điều phối vận chuyển.
 
-## Getting Started
+## Tổng quan dự án
 
-This project is a starting point for a Flutter application.
+Dự án này là một ứng dụng Flutter được thiết kế để giúp quản lý luồng tiền và trạng thái công việc của các shipper trong thời gian thực.
 
-A few resources to get you started if this is your first Flutter project:
+## Các tính năng chính
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Tổng hợp giao dịch**: Theo dõi số lượng shipper đang chờ và đã hoàn thành.
+- **Quản lý Shipper**: Danh sách chi tiết shipper với trạng thái thanh toán và thông tin liên lạc.
+- **UI hiện đại**: Giao diện người dùng được xây dựng với Google Fonts (Inter) và hệ thống màu sắc trực quan.
+- **Tối ưu hóa tài nguyên**: Sử dụng bộ avatar cục bộ cho hiệu suất tốt hơn.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Công nghệ sử dụng
+
+- **Framework**: Flutter
+- **Ngôn ngữ**: Dart
+- **UI Components**: Material 3, Google Fonts, Lucide Icons
+- **Kiến trúc**: Clean Architecture (đang triển khai)
+
+## Bắt đầu
+
+1. **Cài đặt Flutter**: Đảm bảo bạn đã cài đặt Flutter SDK mới nhất.
+2. **Lấy dependencies**:
+   ```bash
+   flutter pub get
+   ```
+3. **Chạy ứng dụng**:
+   ```bash
+   flutter run
+   ```
+
+---
+*Dự án đang trong quá trình phát triển.*
