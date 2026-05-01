@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shipper/presentation/pages/shipper_list_page.dart';
+import '../../../shipper/presentation/pages/shipper_management_tab.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -46,83 +47,171 @@ class _MainPageState extends State<MainPage> {
           child: Container(color: Colors.grey.shade200, height: 1),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SearchBarWidget(),
-            const SizedBox(height: 24),
-            Row(
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: SummaryFlashCard(
-                    title: "Shipper Chờ",
-                    value: '12',
-                    color: const Color(0xFF131B2E),
-                    textColor: Colors.white,
-                  ),
+                const SearchBarWidget(),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SummaryFlashCard(
+                        title: "Shipper Chờ",
+                        value: '12',
+                        color: const Color(0xFF131B2E),
+                        textColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SummaryFlashCard(
+                        title: "Đã Hoàn Thành",
+                        value: '48',
+                        color: const Color(0xFF85F8C4),
+                        textColor: const Color(0xFF002114),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SummaryFlashCard(
-                    title: "Đã Hoàn Thành",
-                    value: '48',
-                    color: const Color(0xFF85F8C4),
-                    textColor: const Color(0xFF002114),
-                  ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Danh sách Shipper',
+                      style: GoogleFonts.inter(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      'HÔM NAY',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 16),
+                const ShipperListContent(),
+                const SizedBox(height: 20),
               ],
             ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Danh sách Shipper',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  'HÔM NAY',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+          ),
+          const Center(child: Text('Tổng kết')),
+          const ShipperManagementTab(),
+        ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            top: BorderSide(color: Colors.grey.shade200, width: 1),
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final itemWidth = constraints.maxWidth / 3;
+                return Stack(
+                  children: [
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 150),
+                      curve: Curves.easeInOut,
+                      left: _selectedIndex * itemWidth,
+                      top: 0,
+                      bottom: 0,
+                      width: itemWidth,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: itemWidth,
+                          child: _buildNavItem(
+                            index: 0,
+                            icon: Icons.receipt_long_outlined,
+                            selectedIcon: Icons.receipt_long,
+                            label: 'GIAO DỊCH',
+                          ),
+                        ),
+                        SizedBox(
+                          width: itemWidth,
+                          child: _buildNavItem(
+                            index: 1,
+                            icon: Icons.bar_chart_outlined,
+                            selectedIcon: Icons.bar_chart,
+                            label: 'TỔNG KẾT',
+                          ),
+                        ),
+                        SizedBox(
+                          width: itemWidth,
+                          child: _buildNavItem(
+                            index: 2,
+                            icon: Icons.local_shipping_outlined,
+                            selectedIcon: Icons.local_shipping,
+                            label: 'SHIPPER',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
-            const SizedBox(height: 16),
-            const ShipperListContent(),
-            const SizedBox(height: 20),
-            const SizedBox(height: 70), // Padding cho bottom nav
-          ],
+          ),
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.receipt_long_outlined),
-            selectedIcon: Icon(Icons.receipt_long),
-            label: 'Giao dịch',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            selectedIcon: Icon(Icons.bar_chart),
-            label: 'Tổng kết',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people),
-            label: 'Shipper',
-          ),
-        ],
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required IconData selectedIcon,
+    required String label,
+  }) {
+    final isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedIndex = index),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        color: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? selectedIcon : icon,
+              color: isSelected ? Colors.white : const Color(0xFF64748B),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Colors.white : const Color(0xFF64748B),
+                letterSpacing: 0.5,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

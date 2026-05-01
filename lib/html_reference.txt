@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Danh sách Shipper - SCM Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#000000", "on-background": "#1b1b1d", "on-primary": "#ffffff", "secondary-fixed": "#85f8c4", "tertiary-container": "#40000c", "surface-tint": "#565e74", "tertiary-fixed-dim": "#ffb3b6", "on-surface-variant": "#45464d", tertiary: "#000000", "surface-container": "#f0edef", surface: "#fcf8fa", secondary: "#006c4a", "surface-container-highest": "#e4e2e4", "inverse-primary": "#bec6e0", "on-primary-container": "#7c839b", "on-surface": "#1b1b1d", "surface-container-low": "#f6f3f5", outline: "#76777d", error: "#ba1a1a", "outline-variant": "#c6c6cd", "error-container": "#ffdad6", "secondary-fixed-dim": "#68dba9", "on-secondary-fixed-variant": "#005137", "on-tertiary-fixed": "#40000c", "surface-bright": "#fcf8fa", "secondary-container": "#82f5c1", "surface-container-high": "#eae7e9", "surface-dim": "#dcd9db", "on-tertiary-container": "#f83256", background: "#fcf8fa", "surface-variant": "#e4e2e4", "tertiary-fixed": "#ffdada", "inverse-on-surface": "#f3f0f2", "on-tertiary-fixed-variant": "#920028", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#3f465c", "on-secondary": "#ffffff", "primary-container": "#131b2e", "primary-fixed": "#dae2fd", "on-secondary-container": "#00714e", "on-error": "#ffffff", "primary-fixed-dim": "#bec6e0", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "inverse-surface": "#303032", "on-secondary-fixed": "#002114", "on-primary-fixed": "#131b2e"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"container-padding": "24px", "element-gap": "16px", unit: "8px", "touch-target-min": "56px", "stack-space": "24px"}, fontFamily: {"body-lg": ["Inter"], "interactive-lg": ["Inter"], display: ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"], "label-caps": ["Inter"], headline: ["Inter"], body: ["Inter"], label: ["Inter"]}, fontSize: {"body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "interactive-lg": ["20px", {lineHeight: "24px", fontWeight: "600"}], display: ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}], "headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}], "label-caps": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "700"}]}}}};</script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcf8fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-slate-900 shadow-sm border-b-2 border-slate-100 dark:border-slate-800 flex justify-between items-center h-16 px-6 w-full docked full-width top-0 z-50 fixed">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-900 dark:text-slate-50" data-icon="account_balance_wallet">account_balance_wallet</span>
+<h1 class="font-sans font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50">SCM Manager</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container bg-surface-container">
+<img alt="User profile" class="w-full h-full object-cover" data-alt="Professional headshot of a logistics manager in a clean corporate office setting, high quality portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf1bHgrDfksqLwnxrc_XEHHAnIKfcX5QTUNw3ud2BgefS2NTiYPusheAj9mTWxBx3whhV9TdpTWLNQuQHPivRnXe-2LOLw4bzwJX-eIRq2TRfGxHM0YlDZTF6IPQk6w9WGBDpIPY2JIKVGivBOCXuWo8fsfwgkWQLQenliHWK4RWnzhoKqDj0ZMz2snVtSTWlifzm-hBNzkPPZI_yH2FpCIv5oyPhTZtZ-4mgFZOzBkpYxH5UeHwDjHDKafJreWqXlqnA3x71gFbeY"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 px-container-padding max-w-4xl mx-auto">
+<!-- Header & Action Row -->
+<div class="flex justify-between items-end mb-stack-space">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Quản lý nhân sự</p>
+<h2 class="font-headline-lg text-headline-lg text-primary">Danh sách Shipper</h2>
+</div>
+<button class="hidden md:flex items-center gap-2 bg-primary text-on-primary px-6 h-[56px] rounded-xl font-interactive-lg text-interactive-lg shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+                Thêm Shipper mới
+            </button>
+</div>
+<!-- Asymmetric Grid for Shippers -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-element-gap">
+<!-- Shipper Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Nguyễn Văn An</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">090 123 4567</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
+<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
+<img alt="QR Code" class="w-full h-full object-contain" data-alt="A clean, minimalist QR code displayed on a white card background for digital payments" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmmEjiL2O_18jnF8D6m59iITq55Ioznp1zo7SDa9hSiIJ76IS9B94aIKIbVFbh7twMi5nOfGsRjOvEZb61Rdn9d-FZYSIJS5mN9h1meqqjt-XkpXyA0va2X0yW_rHpXI_PDgO7DA7OyVf2IK2hlq1qMpv0lwbau2m4lzsfDqMg0LjNBcuIwKH_xg402Yaw-mRLZy1ZAs6WPIUKp2rZr8Y9UxyQm0xuevRYAYfbRyXvXPgSrimd8uHwUQWFLmCz0R6I8PKAbtALCrot"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
+<p class="font-body-md text-body-md font-semibold text-secondary">Vietcombank</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
+</div>
+</div>
+<!-- Shipper Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Lê Thị Bình</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">098 765 4321</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
+<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
+<img alt="QR Code" class="w-full h-full object-contain" data-alt="A high contrast financial QR code with a subtle corporate logo in the center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGT3JNnAtt6cdxhIlmMN10TXKDtHShHw51BbA5j8wjLwMqtauz6HdWqGMv9e42gFwAx5029CM4wAHdlo7pDLWJ8W_wtlKgpVQ888WaRJUtiozrbDHITaRai6gXa1690pSBiFcQONkEyGZqkPHcFfx6geIayYnShl3vtjY1htw5erjEhuMY4KgU2waSBVpTJ6iyaFITEgomSx14smZGR-_u5vkpa1VqkGoAZQVssrT6-bX7Cs_VHcIrvYCrRSbjFkMkXeipCOwcIFV8"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
+<p class="font-body-md text-body-md font-semibold text-secondary">MB Bank</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
+</div>
+</div>
+<!-- Shipper Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group md:col-span-1">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface">Trần Văn Cường</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">091 223 3445</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
+<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
+<img alt="QR Code" class="w-full h-full object-contain" data-alt="Modern QR code on a card for professional money transfers with bank logo placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHUYcaAmXOFKBPtdFXp_zICZgXTvdME_jOA79dhJRCnBpTaWcVk_AWqAcdyZLVEVvDiLJTD0Vb9ajNSNIUtlW-hvsCgTVulfohnFYP3Rih-gEZJ3BMiDOxWWJt7PvuxJt4rF8SWaWZL6fcyfHZ1WDnVfiXxaxIrw2BHf5cyAxanN6Tg1URBCit77QoHZg8nAlKYY9duHKZSqu7iMFMnJ4XB7w0WfuGGRY8vcDvnPPdEMYLQDHeB9ZOtu1M0GBjsIFoBNxLkHEOiCid"/>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
+<p class="font-body-md text-body-md font-semibold text-secondary">Techcombank</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
+</div>
+</div>
+</div>
+<!-- Optional: Empty State (Hidden by default for this view but implemented per task) -->
+<div class="hidden flex-col items-center justify-center py-20 text-center">
+<div class="w-48 h-48 mb-6 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-outline-variant" data-icon="local_shipping">local_shipping</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">Chưa có shipper nào</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8">Bấm nút + để thêm shipper mới vào danh sách quản lý của bạn</p>
+<button class="bg-primary text-on-primary px-8 h-[56px] rounded-xl font-interactive-lg text-interactive-lg shadow-lg active:scale-95 transition-transform flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                Thêm Shipper
+            </button>
+</div>
+</main>
+<!-- Floating Action Button (Mobile Only) -->
+<button class="md:hidden fixed right-6 bottom-28 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-white dark:bg-slate-900 border-t-2 border-slate-100 dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:text-slate-700 dark:hover:text-slate-200 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-sans text-xs font-semibold">Giao dịch</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:text-slate-700 dark:hover:text-slate-200 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-sans text-xs font-semibold">Tổng kết</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 rounded-xl px-4 py-2 active:scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="font-sans text-xs font-semibold">Shipper</span>
+</a>
+</nav>
+</body></html>
