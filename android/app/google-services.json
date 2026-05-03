@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "816990293118",
+    "project_id": "tintin-money",
+    "storage_bucket": "tintin-money.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816990293118:android:24bb8b71cd4b6438ce5c2f",
+        "android_client_info": {
+          "package_name": "com.example.tintin_money"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmT_ooYk-zPWFOV02RyX2QCOOkRIFksLc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

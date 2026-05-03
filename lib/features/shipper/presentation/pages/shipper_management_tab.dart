@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../widgets/add_shipper_dialog.dart';
 
 class ShipperManagementTab extends StatelessWidget {
   const ShipperManagementTab({super.key});
@@ -11,7 +13,13 @@ class ShipperManagementTab extends StatelessWidget {
       backgroundColor: Colors.transparent,
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black,
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const AddShipperDialog(),
+          );
+        },
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -22,37 +30,47 @@ class ShipperManagementTab extends StatelessWidget {
             Text(
               'Danh sách Shipper',
               style: GoogleFonts.inter(
-                fontSize: 24,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),
             ),
             const SizedBox(height: 24),
-            _buildShipperCard(
-              context: context,
-              name: 'Nguyễn Văn An',
-              phone: '090 123 4567',
-              bankName: 'Vietcombank',
-              avatarBgColor: const Color(0xFFDAE2FD),
-              avatarIconColor: const Color(0xFF131B2E),
-            ),
-            const SizedBox(height: 16),
-            _buildShipperCard(
-              context: context,
-              name: 'Lê Thị Bình',
-              phone: '098 765 4321',
-              bankName: 'MB Bank',
-              avatarBgColor: const Color(0xFF82F5C1),
-              avatarIconColor: const Color(0xFF00714E),
-            ),
-            const SizedBox(height: 16),
-            _buildShipperCard(
-              context: context,
-              name: 'Trần Văn Cường',
-              phone: '091 223 3445',
-              bankName: 'Techcombank',
-              avatarBgColor: const Color(0xFFE4E2E4),
-              avatarIconColor: const Color(0xFF45464D),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('shippers_profile')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Đã xảy ra lỗi.');
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final data = snapshot.requireData;
+                if (data.docs.isEmpty) {
+                  return const Text('Không có dữ liệu.');
+                }
+
+                return ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: data.docs.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final doc = data.docs[index].data() as Map<String, dynamic>;
+                    return _buildShipperCard(
+                      context: context,
+                      name: doc['name'],
+                      phone: doc['phone'],
+                      bankName: doc['bank_name'],
+                      qrCode: doc['qr_string'],
+                      avatarIcon: doc['avatar'],
+                    );
+                  },
+                );
+              },
             ),
             const SizedBox(height: 80), // Bottom padding
           ],
@@ -66,8 +84,8 @@ class ShipperManagementTab extends StatelessWidget {
     required String name,
     required String phone,
     required String bankName,
-    required Color avatarBgColor,
-    required Color avatarIconColor,
+    required String qrCode,
+    required String avatarIcon,
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -95,13 +113,9 @@ class ShipperManagementTab extends StatelessWidget {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: avatarBgColor,
+                      color: const Color(0xFFDAE2FD),
                       shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      color: avatarIconColor,
-                      size: 28,
+                      image: DecorationImage(image: NetworkImage(avatarIcon)),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -147,9 +161,7 @@ class ShipperManagementTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: const Color(0xFFF6F3F5),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Colors.grey.shade300,
-              ),
+              border: Border.all(color: Colors.grey.shade300),
             ),
             child: Row(
               children: [
@@ -162,10 +174,7 @@ class ShipperManagementTab extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
-                  child: QrImageView(
-                    data: 'Dummy data for $name $bankName',
-                    version: QrVersions.auto,
-                  ),
+                  child: QrImageView(data: qrCode, version: QrVersions.auto),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -195,7 +204,7 @@ class ShipperManagementTab extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.fullscreen, color: Colors.grey),
                   onPressed: () {
-                    _showQRDialog(context, bankName, name);
+                    _showQRDialog(context, qrCode, name);
                   },
                 ),
               ],
@@ -206,7 +215,7 @@ class ShipperManagementTab extends StatelessWidget {
     );
   }
 
-  void _showQRDialog(BuildContext context, String bankName, String name) {
+  void _showQRDialog(BuildContext context, String qrCode, String name) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -243,16 +252,18 @@ class ShipperManagementTab extends StatelessWidget {
                           color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
-                        )
+                        ),
                       ],
                     ),
                     child: QrImageView(
-                      data: 'Dummy data for $name $bankName',
+                      data: qrCode,
                       version: QrVersions.auto,
                       size: 280,
                     ),
                   ),
-                  const SizedBox(height: 80), // Offset to visually center better
+                  const SizedBox(
+                    height: 80,
+                  ), // Offset to visually center better
                 ],
               ),
             ),

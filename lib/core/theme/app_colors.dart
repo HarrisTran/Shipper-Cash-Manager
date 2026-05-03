@@ -14,4 +14,7 @@ class AppColors {
   static const Color outline = Color(0xFFE2E8F0);
   static const Color textPrimary = Color(0xFF1B1B1D);
   static const Color textSecondary = Color(0xFF45464D);
+
+  static const Color trendingUp = Color(0xFF016C4A);
+  static const Color trendingDown = Color(0xFFE11D48);
 }

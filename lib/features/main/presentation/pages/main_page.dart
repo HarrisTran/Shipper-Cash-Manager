@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tintin_money/features/statistic/presentation/pages/statistic_tab.dart';
 import '../../../shipper/presentation/pages/shipper_list_page.dart';
 import '../../../shipper/presentation/pages/shipper_management_tab.dart';
 
@@ -105,7 +106,7 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
           ),
-          const Center(child: Text('Tổng kết')),
+          const StatisticTab(),
           const ShipperManagementTab(),
         ],
       ),
@@ -156,7 +157,7 @@ class _MainPageState extends State<MainPage> {
                             index: 1,
                             icon: Icons.bar_chart_outlined,
                             selectedIcon: Icons.bar_chart,
-                            label: 'TỔNG KẾT',
+                            label: 'THỐNG KÊ',
                           ),
                         ),
                         SizedBox(

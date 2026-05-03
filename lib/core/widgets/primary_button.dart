@@ -33,9 +33,9 @@ class ScmPrimaryButton extends StatelessWidget {
               )
             : Text(
                 label,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: AppColors.primary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelLarge?.copyWith(color: AppColors.primary),
               ),
       );
     }
@@ -60,9 +60,9 @@ class ScmPrimaryButton extends StatelessWidget {
             )
           : Text(
               label,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Colors.white,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelLarge?.copyWith(color: Colors.white),
             ),
     );
   }

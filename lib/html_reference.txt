@@ -3,187 +3,227 @@
 <html class="light" lang="vi"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Danh sách Shipper - SCM Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {primary: "#000000", "on-background": "#1b1b1d", "on-primary": "#ffffff", "secondary-fixed": "#85f8c4", "tertiary-container": "#40000c", "surface-tint": "#565e74", "tertiary-fixed-dim": "#ffb3b6", "on-surface-variant": "#45464d", tertiary: "#000000", "surface-container": "#f0edef", surface: "#fcf8fa", secondary: "#006c4a", "surface-container-highest": "#e4e2e4", "inverse-primary": "#bec6e0", "on-primary-container": "#7c839b", "on-surface": "#1b1b1d", "surface-container-low": "#f6f3f5", outline: "#76777d", error: "#ba1a1a", "outline-variant": "#c6c6cd", "error-container": "#ffdad6", "secondary-fixed-dim": "#68dba9", "on-secondary-fixed-variant": "#005137", "on-tertiary-fixed": "#40000c", "surface-bright": "#fcf8fa", "secondary-container": "#82f5c1", "surface-container-high": "#eae7e9", "surface-dim": "#dcd9db", "on-tertiary-container": "#f83256", background: "#fcf8fa", "surface-variant": "#e4e2e4", "tertiary-fixed": "#ffdada", "inverse-on-surface": "#f3f0f2", "on-tertiary-fixed-variant": "#920028", "surface-container-lowest": "#ffffff", "on-primary-fixed-variant": "#3f465c", "on-secondary": "#ffffff", "primary-container": "#131b2e", "primary-fixed": "#dae2fd", "on-secondary-container": "#00714e", "on-error": "#ffffff", "primary-fixed-dim": "#bec6e0", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "inverse-surface": "#303032", "on-secondary-fixed": "#002114", "on-primary-fixed": "#131b2e"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"container-padding": "24px", "element-gap": "16px", unit: "8px", "touch-target-min": "56px", "stack-space": "24px"}, fontFamily: {"body-lg": ["Inter"], "interactive-lg": ["Inter"], display: ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"], "label-caps": ["Inter"], headline: ["Inter"], body: ["Inter"], label: ["Inter"]}, fontSize: {"body-lg": ["18px", {lineHeight: "28px", fontWeight: "400"}], "interactive-lg": ["20px", {lineHeight: "24px", fontWeight: "600"}], display: ["32px", {lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-md": ["20px", {lineHeight: "28px", fontWeight: "600"}], "headline-lg": ["24px", {lineHeight: "32px", fontWeight: "700"}], "label-caps": ["14px", {lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "700"}]}}}};</script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#f83256",
+                    "surface-container-low": "#f6f3f5",
+                    "on-secondary-fixed-variant": "#005137",
+                    "inverse-on-surface": "#f3f0f2",
+                    "surface-dim": "#dcd9db",
+                    "inverse-surface": "#303032",
+                    "on-error": "#ffffff",
+                    "on-surface": "#1b1b1d",
+                    "on-primary-container": "#7c839b",
+                    "tertiary-fixed-dim": "#ffb3b6",
+                    "outline-variant": "#c6c6cd",
+                    "secondary-container": "#82f5c1",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#131b2e",
+                    "on-primary": "#ffffff",
+                    "secondary": "#006c4a",
+                    "background": "#fcf8fa",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#f0edef",
+                    "error": "#ba1a1a",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed": "#85f8c4",
+                    "surface-container-high": "#eae7e9",
+                    "on-secondary-fixed": "#002114",
+                    "inverse-primary": "#bec6e0",
+                    "surface-variant": "#e4e2e4",
+                    "on-tertiary-fixed-variant": "#920028",
+                    "surface-container-highest": "#e4e2e4",
+                    "secondary-fixed-dim": "#68dba9",
+                    "on-surface-variant": "#45464d",
+                    "primary": "#000000",
+                    "surface-bright": "#fcf8fa",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ffdada",
+                    "on-error-container": "#93000a",
+                    "on-background": "#1b1b1d",
+                    "tertiary-container": "#40000c",
+                    "on-secondary-container": "#00714e",
+                    "surface-tint": "#565e74",
+                    "primary-fixed": "#dae2fd",
+                    "outline": "#76777d",
+                    "on-tertiary-fixed": "#40000c",
+                    "primary-fixed-dim": "#bec6e0",
+                    "tertiary": "#000000",
+                    "surface": "#fcf8fa",
+                    "on-primary-fixed": "#131b2e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
 <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #fcf8fa;
-        }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 <style>
     body {
       min-height: max(884px, 100dvh);
     }
   </style>
-<style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-  </style>
-  </head>
-<body class="bg-background text-on-background min-h-screen pb-32">
-<!-- TopAppBar -->
-<header class="bg-white dark:bg-slate-900 shadow-sm border-b-2 border-slate-100 dark:border-slate-800 flex justify-between items-center h-16 px-6 w-full docked full-width top-0 z-50 fixed">
-<div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-slate-900 dark:text-slate-50" data-icon="account_balance_wallet">account_balance_wallet</span>
-<h1 class="font-sans font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50">SCM Manager</h1>
-</div>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Top AppBar (From Shared Components) -->
+<header class="fixed top-0 left-0 w-full z-40 flex justify-between items-center px-6 h-14 bg-slate-50 border-b border-slate-200">
 <div class="flex items-center gap-4">
-<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-container bg-surface-container">
-<img alt="User profile" class="w-full h-full object-cover" data-alt="Professional headshot of a logistics manager in a clean corporate office setting, high quality portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCf1bHgrDfksqLwnxrc_XEHHAnIKfcX5QTUNw3ud2BgefS2NTiYPusheAj9mTWxBx3whhV9TdpTWLNQuQHPivRnXe-2LOLw4bzwJX-eIRq2TRfGxHM0YlDZTF6IPQk6w9WGBDpIPY2JIKVGivBOCXuWo8fsfwgkWQLQenliHWK4RWnzhoKqDj0ZMz2snVtSTWlifzm-hBNzkPPZI_yH2FpCIv5oyPhTZtZ-4mgFZOzBkpYxH5UeHwDjHDKafJreWqXlqnA3x71gFbeY"/>
+<span class="material-symbols-outlined text-slate-900" data-icon="menu">menu</span>
+<h1 class="font-['Inter'] font-bold text-xl leading-tight text-slate-900">Shippers</h1>
 </div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male executive with a friendly smile, set against a clean, neutral office background. The lighting is soft and professional, emphasizing a corporate light-mode aesthetic. The image reflects a high-trust environment with a focus on reliability and professional mastery, consistent with the Shipper Cash Manager visual identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6nYsepBTd0USrEUoWOhjF4mN8oPD4rwHvkbYERuExaDRVnjm7TFAQneesucQSL2NJBmmnQmRlJkx_UHG_2MOvo4ost_76y9TeZUEe4T19Gr6-0qivvQi7a_a76aNPGCO8nqXLGNWTXUgwc0rUZjL9vVdALS_pFtmcUH0O9-rnUyl_2dHM0-tAY75z1X7XUkWLwr-qDhOs9cThwJM5PtcSG5BQ3t9qT-vblQeDz3dHMiMe2pou-9fj0wmtCJ4sKbJx0rbGBHXas53x"/>
 </div>
 </header>
-<!-- Main Content Canvas -->
-<main class="pt-20 px-container-padding max-w-4xl mx-auto">
-<!-- Header & Action Row -->
-<div class="flex justify-between items-end mb-stack-space">
-<div>
-<p class="font-label-caps text-label-caps text-on-surface-variant uppercase mb-1">Quản lý nhân sự</p>
-<h2 class="font-headline-lg text-headline-lg text-primary">Danh sách Shipper</h2>
-</div>
-<button class="hidden md:flex items-center gap-2 bg-primary text-on-primary px-6 h-[56px] rounded-xl font-interactive-lg text-interactive-lg shadow-lg active:scale-95 transition-transform">
-<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
-                Thêm Shipper mới
-            </button>
-</div>
-<!-- Asymmetric Grid for Shippers -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-element-gap">
-<!-- Shipper Card 1 -->
-<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group">
-<div class="flex justify-between items-start mb-4">
+<!-- Background Content: Shipper List (Blurred/Dimmed) -->
+<main class="pt-20 pb-24 px-6 filter blur-[2px] opacity-40 pointer-events-none">
+<div class="mb-6">
+<h2 class="text-2xl font-bold tracking-tight text-primary mb-4">Danh sách Shipper</h2>
+<div class="space-y-4">
+<!-- Shipper Card Placeholder 1 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant flex items-center justify-between">
 <div class="flex items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
-<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
 </div>
 <div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Nguyễn Văn An</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">090 123 4567</p>
+<div class="font-bold text-lg text-on-surface">Nguyễn Văn An</div>
+<div class="text-on-surface-variant">0901 234 567</div>
 </div>
 </div>
-<div class="flex gap-2">
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</button>
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
 </div>
-</div>
-<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
-<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
-<img alt="QR Code" class="w-full h-full object-contain" data-alt="A clean, minimalist QR code displayed on a white card background for digital payments" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmmEjiL2O_18jnF8D6m59iITq55Ioznp1zo7SDa9hSiIJ76IS9B94aIKIbVFbh7twMi5nOfGsRjOvEZb61Rdn9d-FZYSIJS5mN9h1meqqjt-XkpXyA0va2X0yW_rHpXI_PDgO7DA7OyVf2IK2hlq1qMpv0lwbau2m4lzsfDqMg0LjNBcuIwKH_xg402Yaw-mRLZy1ZAs6WPIUKp2rZr8Y9UxyQm0xuevRYAYfbRyXvXPgSrimd8uHwUQWFLmCz0R6I8PKAbtALCrot"/>
-</div>
-<div>
-<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
-<p class="font-body-md text-body-md font-semibold text-secondary">Vietcombank</p>
-</div>
-<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
-</div>
-</div>
-<!-- Shipper Card 2 -->
-<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group">
-<div class="flex justify-between items-start mb-4">
+<!-- Shipper Card Placeholder 2 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant flex items-center justify-between">
 <div class="flex items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
-<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
 </div>
 <div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Lê Thị Bình</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">098 765 4321</p>
+<div class="font-bold text-lg text-on-surface">Lê Thị Bình</div>
+<div class="text-on-surface-variant">0908 765 432</div>
 </div>
 </div>
-<div class="flex gap-2">
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</button>
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
+<span class="material-symbols-outlined text-secondary">check_circle</span>
 </div>
-</div>
-<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
-<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
-<img alt="QR Code" class="w-full h-full object-contain" data-alt="A high contrast financial QR code with a subtle corporate logo in the center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGT3JNnAtt6cdxhIlmMN10TXKDtHShHw51BbA5j8wjLwMqtauz6HdWqGMv9e42gFwAx5029CM4wAHdlo7pDLWJ8W_wtlKgpVQ888WaRJUtiozrbDHITaRai6gXa1690pSBiFcQONkEyGZqkPHcFfx6geIayYnShl3vtjY1htw5erjEhuMY4KgU2waSBVpTJ6iyaFITEgomSx14smZGR-_u5vkpa1VqkGoAZQVssrT6-bX7Cs_VHcIrvYCrRSbjFkMkXeipCOwcIFV8"/>
-</div>
-<div>
-<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
-<p class="font-body-md text-body-md font-semibold text-secondary">MB Bank</p>
-</div>
-<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
-</div>
-</div>
-<!-- Shipper Card 3 -->
-<div class="bg-surface-container-lowest border border-outline-variant p-5 rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow group md:col-span-1">
-<div class="flex justify-between items-start mb-4">
+<!-- Shipper Card Placeholder 3 -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant flex items-center justify-between">
 <div class="flex items-center gap-4">
-<div class="w-14 h-14 rounded-full bg-surface-variant flex items-center justify-center text-on-surface-variant">
-<span class="material-symbols-outlined text-3xl" data-icon="person">person</span>
+<div class="w-14 h-14 bg-surface-container-high rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">person</span>
 </div>
 <div>
-<h3 class="font-headline-md text-headline-md text-on-surface">Trần Văn Cường</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">091 223 3445</p>
+<div class="font-bold text-lg text-on-surface">Trần Minh Cường</div>
+<div class="text-on-surface-variant">0912 333 444</div>
 </div>
 </div>
-<div class="flex gap-2">
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-outline hover:bg-surface-container-high transition-colors">
-<span class="material-symbols-outlined" data-icon="edit">edit</span>
-</button>
-<button class="w-10 h-10 rounded-full flex items-center justify-center text-error hover:bg-error-container transition-colors">
-<span class="material-symbols-outlined" data-icon="delete">delete</span>
-</button>
+<span class="material-symbols-outlined text-on-tertiary-container">error</span>
 </div>
 </div>
-<div class="mt-2 p-3 bg-surface-container-low rounded-lg border border-dashed border-outline-variant flex items-center gap-4">
-<div class="w-16 h-16 bg-white p-1 rounded border border-outline-variant overflow-hidden">
-<img alt="QR Code" class="w-full h-full object-contain" data-alt="Modern QR code on a card for professional money transfers with bank logo placeholder" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHUYcaAmXOFKBPtdFXp_zICZgXTvdME_jOA79dhJRCnBpTaWcVk_AWqAcdyZLVEVvDiLJTD0Vb9ajNSNIUtlW-hvsCgTVulfohnFYP3Rih-gEZJ3BMiDOxWWJt7PvuxJt4rF8SWaWZL6fcyfHZ1WDnVfiXxaxIrw2BHf5cyAxanN6Tg1URBCit77QoHZg8nAlKYY9duHKZSqu7iMFMnJ4XB7w0WfuGGRY8vcDvnPPdEMYLQDHeB9ZOtu1M0GBjsIFoBNxLkHEOiCid"/>
-</div>
-<div>
-<p class="font-label-caps text-label-caps text-on-surface-variant">BANKING QR</p>
-<p class="font-body-md text-body-md font-semibold text-secondary">Techcombank</p>
-</div>
-<span class="material-symbols-outlined ml-auto text-outline group-hover:text-primary" data-icon="fullscreen">fullscreen</span>
-</div>
-</div>
-</div>
-<!-- Optional: Empty State (Hidden by default for this view but implemented per task) -->
-<div class="hidden flex-col items-center justify-center py-20 text-center">
-<div class="w-48 h-48 mb-6 rounded-full bg-surface-container flex items-center justify-center">
-<span class="material-symbols-outlined text-6xl text-outline-variant" data-icon="local_shipping">local_shipping</span>
-</div>
-<h3 class="font-headline-lg text-headline-lg text-on-surface mb-2">Chưa có shipper nào</h3>
-<p class="font-body-md text-body-md text-on-surface-variant mb-8">Bấm nút + để thêm shipper mới vào danh sách quản lý của bạn</p>
-<button class="bg-primary text-on-primary px-8 h-[56px] rounded-xl font-interactive-lg text-interactive-lg shadow-lg active:scale-95 transition-transform flex items-center gap-3">
-<span class="material-symbols-outlined" data-icon="add">add</span>
-                Thêm Shipper
-            </button>
 </div>
 </main>
-<!-- Floating Action Button (Mobile Only) -->
-<button class="md:hidden fixed right-6 bottom-28 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center z-40 active:scale-90 transition-transform">
-<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+<!-- Overlay Modal Backdrop -->
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center px-4">
+<!-- Modal Content -->
+<div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+<!-- Modal Header -->
+<div class="px-6 py-5 border-b border-surface-container">
+<h3 class="text-xl font-bold text-slate-900">Thêm Shipper Mới</h3>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="p-6 space-y-6 overflow-y-auto max-h-[400px] scrollbar-hide">
+<!-- Avatar Upload Section -->
+<div class="flex flex-col items-center">
+<div class="relative group">
+<div class="w-24 h-24 rounded-full bg-surface-container-high flex items-center justify-center border-2 border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-4xl text-outline-variant">person</span>
+</div>
+<button class="absolute bottom-0 right-0 w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-xl" data-icon="camera">camera</span>
 </button>
-<!-- BottomNavBar -->
-<nav class="fixed bottom-0 left-0 w-full h-20 flex justify-around items-center px-4 bg-white dark:bg-slate-900 border-t-2 border-slate-100 dark:border-slate-800 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] z-50">
-<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:text-slate-700 dark:hover:text-slate-200 active:scale-95 transition-transform duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
-<span class="font-sans text-xs font-semibold">Giao dịch</span>
-</a>
-<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-4 py-2 hover:text-slate-700 dark:hover:text-slate-200 active:scale-95 transition-transform duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
-<span class="font-sans text-xs font-semibold">Tổng kết</span>
-</a>
-<a class="flex flex-col items-center justify-center bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 rounded-xl px-4 py-2 active:scale-95 transition-transform duration-200" href="#">
-<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
-<span class="font-sans text-xs font-semibold">Shipper</span>
-</a>
+</div>
+<span class="mt-2 text-sm font-semibold text-on-surface-variant">Ảnh chân dung</span>
+</div>
+<!-- Input Fields -->
+<div class="space-y-5">
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-on-surface uppercase tracking-wider">Họ và tên</label>
+<input class="w-full h-14 px-4 bg-surface-container-low border-2 border-transparent rounded-lg focus:border-primary focus:bg-white focus:outline-none text-lg transition-all" placeholder="Nhập họ và tên đầy đủ" type="text"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-on-surface uppercase tracking-wider">Số điện thoại</label>
+<input class="w-full h-14 px-4 bg-surface-container-low border-2 border-transparent rounded-lg focus:border-primary focus:bg-white focus:outline-none text-lg transition-all" placeholder="Nhập số điện thoại liên lạc" type="tel"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-sm font-bold text-on-surface uppercase tracking-wider">Tên ngân hàng</label>
+<input class="w-full h-14 px-4 bg-surface-container-low border-2 border-transparent rounded-lg focus:border-primary focus:bg-white focus:outline-none text-lg transition-all" placeholder="Ví dụ: Vietcombank, Techcombank..." type="text"/>
+</div>
+</div>
+<!-- Bank QR Section -->
+<div class="pt-4">
+<label class="text-sm font-bold text-on-surface uppercase tracking-wider mb-3 block">Mã QR Ngân hàng</label>
+<div class="w-full p-6 border-2 border-dashed border-outline-variant rounded-xl flex flex-col items-center justify-center bg-surface-container-lowest">
+<span class="material-symbols-outlined text-5xl text-outline-variant mb-4">qr_code_2</span>
+<button class="flex items-center justify-center gap-2 h-14 px-6 bg-secondary text-on-secondary rounded-lg font-bold text-lg w-full active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+                            Quét mã QR
+                        </button>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-5 bg-surface-container-lowest border-t border-surface-container flex flex-col gap-3">
+<button class="w-full h-14 bg-primary text-on-primary rounded-lg font-bold text-xl flex items-center justify-center active:scale-[0.98] transition-all">
+                    Lưu thông tin
+                </button>
+<button class="w-full h-14 bg-white text-primary border-2 border-primary rounded-lg font-bold text-xl flex items-center justify-center active:scale-[0.98] transition-all">
+                    Hủy
+                </button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar (From Shared Components) -->
+<nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center px-4 h-20 bg-white border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] filter blur-[1px]">
+<div class="flex flex-col items-center justify-center text-slate-500 px-4 py-1.5">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[12px] font-bold tracking-wide uppercase mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-blue-100 text-blue-900 rounded-xl px-4 py-1.5">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-['Inter'] text-[12px] font-bold tracking-wide uppercase mt-1">Shippers</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 px-4 py-1.5">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-['Inter'] text-[12px] font-bold tracking-wide uppercase mt-1">Cash Flow</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 px-4 py-1.5">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[12px] font-bold tracking-wide uppercase mt-1">Settings</span>
+</div>
 </nav>
 </body></html>

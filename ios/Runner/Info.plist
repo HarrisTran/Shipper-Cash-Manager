@@ -66,5 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+<string>Chúng tôi cần truy cập camera để quét mã QR cho giao dịch.</string>
 </dict>
 </plist>

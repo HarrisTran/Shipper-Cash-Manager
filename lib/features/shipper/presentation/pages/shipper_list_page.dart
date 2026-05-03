@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../features/transaction/presentation/pages/cash_counting_page.dart';
 
+enum ShipperStatus { done, pending, feePending }
+
 class ShipperListContent extends StatelessWidget {
   const ShipperListContent({super.key});
 
@@ -10,61 +12,61 @@ class ShipperListContent extends StatelessWidget {
       {
         'name': 'Nguyễn Văn An',
         'phone': '090 123 4567',
-        'done': true,
+        'status': ShipperStatus.done,
         'img': 'assets/images/avatar/Avatar Users2_1.png',
       },
       {
         'name': 'Lê Thị Bìnhh',
         'phone': '091 987 6543',
-        'done': false,
+        'status': ShipperStatus.pending,
         'img': 'assets/images/avatar/Avatar Users2_5.png',
       },
       {
         'name': 'Trần Văn Cường',
         'phone': '098 555 1234',
-        'done': false,
+        'status': ShipperStatus.feePending,
         'img': 'assets/images/avatar/Avatar Users2_8.png',
       },
       {
         'name': 'Phạm Minh Hoàng',
         'phone': '097 444 8888',
-        'done': true,
+        'status': ShipperStatus.done,
         'img': 'assets/images/avatar/Avatar Users2_12.png',
       },
       {
         'name': 'Đặng Thu Thảo',
         'phone': '096 111 2222',
-        'done': false,
+        'status': ShipperStatus.pending,
         'img': 'assets/images/avatar/Avatar Users2_15.png',
       },
       {
         'name': 'Vũ Minh Đức',
         'phone': '093 333 4444',
-        'done': true,
+        'status': ShipperStatus.done,
         'img': 'assets/images/avatar/Avatar Users2_20.png',
       },
       {
         'name': 'Hoàng Nam Anh',
         'phone': '094 555 6666',
-        'done': false,
+        'status': ShipperStatus.feePending,
         'img': 'assets/images/avatar/Avatar Users2_25.png',
       },
       {
         'name': 'Phan Thanh Hải',
         'phone': '092 777 8888',
-        'done': true,
+        'status': ShipperStatus.done,
         'img': 'assets/images/avatar/Avatar Users2_30.png',
       },
       {
         'name': 'Bùi Thị Tuyết',
         'phone': '095 999 0000',
-        'done': false,
+        'status': ShipperStatus.pending,
         'img': 'assets/images/avatar/Avatar Users2_35.png',
       },
       {
         'name': 'Ngô Gia Huy',
         'phone': '089 123 7890',
-        'done': true,
+        'status': ShipperStatus.done,
         'img': 'assets/images/avatar/Avatar Users2_40.png',
       },
     ];
@@ -73,13 +75,13 @@ class ShipperListContent extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: shippers.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final s = shippers[index];
         return ShipperStateCard(
           name: s['name'],
           phone: s['phone'],
-          isDone: s['done'],
+          status: s['status'],
           imageUrl: s['img'],
         );
       },
@@ -90,13 +92,13 @@ class ShipperListContent extends StatelessWidget {
 class ShipperStateCard extends StatelessWidget {
   final String name;
   final String phone;
-  final bool isDone;
+  final ShipperStatus status;
   final String imageUrl;
   const ShipperStateCard({
     super.key,
     required this.name,
     required this.phone,
-    required this.isDone,
+    required this.status,
     required this.imageUrl,
   });
 
@@ -120,10 +122,7 @@ class ShipperStateCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.grey.shade300,
-            width: 2, // tăng độ dày viền
-          ),
+          border: Border.all(color: Colors.grey.shade300, width: 2),
         ),
         child: Row(
           children: [
@@ -169,7 +168,7 @@ class ShipperStateCard extends StatelessWidget {
                 ],
               ),
             ),
-            StatusChip(isDone: isDone),
+            StatusChip(status: status),
           ],
         ),
       ),
@@ -178,33 +177,55 @@ class ShipperStateCard extends StatelessWidget {
 }
 
 class StatusChip extends StatelessWidget {
-  final bool isDone;
+  final ShipperStatus status;
 
-  const StatusChip({super.key, required this.isDone});
+  const StatusChip({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor;
+    Color fgColor;
+    IconData icon;
+    String text;
+
+    switch (status) {
+      case ShipperStatus.done:
+        bgColor = const Color(0xFF006C4A);
+        fgColor = Colors.white;
+        icon = Icons.check_circle;
+        text = 'Đã xong';
+        break;
+      case ShipperStatus.feePending:
+        bgColor = const Color(0xFFFEF0C7);
+        fgColor = const Color(0xFFDC6803);
+        icon = Icons.warning_amber_rounded;
+        text = 'Chưa đưa phí';
+        break;
+      case ShipperStatus.pending:
+        bgColor = const Color(0xFFFFDADA);
+        fgColor = const Color(0xFF40000C);
+        icon = Icons.access_time_filled;
+        text = 'Chưa chuyển';
+        break;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: isDone ? const Color(0xFF006C4A) : const Color(0xFFFFDADA),
+        color: bgColor,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            isDone ? Icons.check_circle : Icons.access_time_filled,
-            size: 16,
-            color: isDone ? Colors.white : const Color(0xFF40000C),
-          ),
+          Icon(icon, size: 16, color: fgColor),
           const SizedBox(width: 6),
           Text(
-            (isDone ? 'Đã xong' : 'Chưa chuyển').toUpperCase(),
+            text.toUpperCase(),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: isDone ? Colors.white : const Color(0xFF40000C),
+              color: fgColor,
             ),
           ),
         ],

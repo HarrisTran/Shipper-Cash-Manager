@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'qr_payment_page.dart';
+
 class CashCountingPage extends StatefulWidget {
   final String shipperName;
   final String shipperPhone;
@@ -427,7 +429,7 @@ class _CashCountingPageState extends State<CashCountingPage> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: primaryColor.withOpacity(0.3),
+                          color: primaryColor.withValues(alpha: 0.3),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -463,10 +465,10 @@ class _CashCountingPageState extends State<CashCountingPage> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                             ),
                           ),
                           child: const Icon(
@@ -490,12 +492,23 @@ class _CashCountingPageState extends State<CashCountingPage> {
               gradient: LinearGradient(
                 begin: Alignment.bottomCenter,
                 end: Alignment.topCenter,
-                colors: [scaffoldBgColor, scaffoldBgColor.withOpacity(0.0)],
+                colors: [
+                  scaffoldBgColor,
+                  scaffoldBgColor.withValues(alpha: 0.0),
+                ],
               ),
             ),
             child: ElevatedButton(
               onPressed: () {
-                // TODO: Xử lý nút tiếp tục tạo mã QR
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => QrPaymentPage(
+                      shipperName: widget.shipperName,
+                      totalAmount: _totalAmount,
+                    ),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
