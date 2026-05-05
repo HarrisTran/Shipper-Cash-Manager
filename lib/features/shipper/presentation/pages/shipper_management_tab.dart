@@ -1,7 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tintin_money/features/shipper/presentation/widgets/remove_shipper_dialog.dart';
 import '../widgets/add_shipper_dialog.dart';
 
 class ShipperManagementTab extends StatelessWidget {
@@ -9,78 +11,67 @@ class ShipperManagementTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black,
-        onPressed: () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => const AddShipperDialog(),
-          );
-        },
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Danh sách Shipper',
-              style: GoogleFonts.inter(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Danh sách Shipper',
+            style: GoogleFonts.inter(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
-            const SizedBox(height: 24),
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('shippers_profile')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text('Đã xảy ra lỗi.');
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+          ),
+          const SizedBox(height: 24),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('shippers_profile')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Đã xảy ra lỗi.');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                final data = snapshot.requireData;
-                if (data.docs.isEmpty) {
-                  return const Text('Không có dữ liệu.');
-                }
+              final data = snapshot.requireData;
+              if (data.docs.isEmpty) {
+                return const Text('Không có dữ liệu.');
+              }
 
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: data.docs.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 16),
-                  itemBuilder: (context, index) {
-                    final doc = data.docs[index].data() as Map<String, dynamic>;
-                    return _buildShipperCard(
-                      context: context,
-                      name: doc['name'],
-                      phone: doc['phone'],
-                      bankName: doc['bank_name'],
-                      qrCode: doc['qr_string'],
-                      avatarIcon: doc['avatar'],
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 80), // Bottom padding
-          ],
-        ),
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: data.docs.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final doc = data.docs[index];
+                  final docData = doc.data() as Map<String, dynamic>;
+                  return _buildShipperCard(
+                    context: context,
+                    id: doc.id,
+                    name: docData['name'] ?? '',
+                    phone: docData['phone'] ?? '',
+                    bankName: docData['bank_name'] ?? '',
+                    qrCode: docData['qr_string'] ?? '',
+                    avatarIcon: docData['avatar'] ?? '',
+                  );
+                },
+              );
+            },
+          ),
+          const SizedBox(height: 80), // Bottom padding
+        ],
       ),
     );
   }
 
   Widget _buildShipperCard({
     required BuildContext context,
+    required String id,
     required String name,
     required String phone,
     required String bankName,
@@ -88,7 +79,7 @@ class ShipperManagementTab extends StatelessWidget {
     required String avatarIcon,
   }) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -109,23 +100,53 @@ class ShipperManagementTab extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFDAE2FD),
-                      shape: BoxShape.circle,
-                      image: DecorationImage(image: NetworkImage(avatarIcon)),
+                  CachedNetworkImage(
+                    imageUrl: avatarIcon,
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    placeholder: (context, url) => Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: const Icon(
+                        Icons.person,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         name,
                         style: GoogleFonts.inter(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -149,7 +170,12 @@ class ShipperManagementTab extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => RemoveShipperDialog(id: id),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tintin_money/features/statistic/presentation/pages/statistic_tab.dart';
 import '../../../shipper/presentation/pages/shipper_list_page.dart';
 import '../../../shipper/presentation/pages/shipper_management_tab.dart';
+import '../../../shipper/presentation/widgets/add_shipper_dialog.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -13,10 +15,12 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
+  bool _isBottomBarVisible = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: AppBar(
         title: Row(
           children: [
@@ -48,136 +52,145 @@ class _MainPageState extends State<MainPage> {
           child: Container(color: Colors.grey.shade200, height: 1),
         ),
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SearchBarWidget(),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SummaryFlashCard(
-                        title: "Shipper Chờ",
-                        value: '12',
-                        color: const Color(0xFF131B2E),
-                        textColor: Colors.white,
+      body: NotificationListener<UserScrollNotification>(
+        onNotification: (notification) {
+          if (notification.direction == ScrollDirection.reverse) {
+            if (_isBottomBarVisible) {
+              setState(() => _isBottomBarVisible = false);
+            }
+          } else if (notification.direction == ScrollDirection.forward) {
+            if (!_isBottomBarVisible) {
+              setState(() => _isBottomBarVisible = true);
+            }
+          }
+          return false;
+        },
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SearchBarWidget(),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SummaryFlashCard(
+                          title: "Shipper Chờ",
+                          value: '12',
+                          color: const Color(0xFF131B2E),
+                          textColor: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SummaryFlashCard(
-                        title: "Đã Hoàn Thành",
-                        value: '48',
-                        color: const Color(0xFF85F8C4),
-                        textColor: const Color(0xFF002114),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: SummaryFlashCard(
+                          title: "Đã Hoàn Thành",
+                          value: '48',
+                          color: const Color(0xFF85F8C4),
+                          textColor: const Color(0xFF002114),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Danh sách Shipper',
-                      style: GoogleFonts.inter(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Danh sách Shipper',
+                        style: GoogleFonts.inter(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'HÔM NAY',
-                      style: GoogleFonts.inter(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                      Text(
+                        'HÔM NAY',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const ShipperListContent(),
-                const SizedBox(height: 20),
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const ShipperListContent(),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+            const StatisticTab(),
+            const ShipperManagementTab(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: AnimatedSlide(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        offset: _isBottomBarVisible ? Offset.zero : const Offset(0, 1.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(
+              top: BorderSide(color: Colors.grey.shade200, width: 1),
             ),
           ),
-          const StatisticTab(),
-          const ShipperManagementTab(),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade200, width: 1),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final itemWidth = constraints.maxWidth / 3;
-                return Stack(
-                  children: [
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeInOut,
-                      left: _selectedIndex * itemWidth,
-                      top: 0,
-                      bottom: 0,
-                      width: itemWidth,
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildNavItem(
+                      index: 0,
+                      icon: Icons.receipt_long_outlined,
+                      selectedIcon: Icons.receipt_long,
+                      label: 'GIAO DỊCH',
                     ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: itemWidth,
-                          child: _buildNavItem(
-                            index: 0,
-                            icon: Icons.receipt_long_outlined,
-                            selectedIcon: Icons.receipt_long,
-                            label: 'GIAO DỊCH',
-                          ),
-                        ),
-                        SizedBox(
-                          width: itemWidth,
-                          child: _buildNavItem(
-                            index: 1,
-                            icon: Icons.bar_chart_outlined,
-                            selectedIcon: Icons.bar_chart,
-                            label: 'THỐNG KÊ',
-                          ),
-                        ),
-                        SizedBox(
-                          width: itemWidth,
-                          child: _buildNavItem(
-                            index: 2,
-                            icon: Icons.local_shipping_outlined,
-                            selectedIcon: Icons.local_shipping,
-                            label: 'SHIPPER',
-                          ),
-                        ),
-                      ],
+                  ),
+                  Expanded(
+                    child: _buildNavItem(
+                      index: 1,
+                      icon: Icons.bar_chart_outlined,
+                      selectedIcon: Icons.bar_chart,
+                      label: 'THỐNG KÊ',
                     ),
-                  ],
-                );
-              },
+                  ),
+                  Expanded(
+                    child: _buildNavItem(
+                      index: 2,
+                      icon: Icons.local_shipping_outlined,
+                      selectedIcon: Icons.local_shipping,
+                      label: 'SHIPPER',
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+      floatingActionButton: _selectedIndex == 2
+          ? AnimatedScale(
+              scale: _isBottomBarVisible ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 200),
+              child: FloatingActionButton(
+                backgroundColor: Colors.black,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => const AddShipperDialog(),
+                  );
+                },
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            )
+          : null,
     );
   }
 
@@ -193,7 +206,11 @@ class _MainPageState extends State<MainPage> {
       behavior: HitTestBehavior.opaque,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
-        color: Colors.transparent,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
