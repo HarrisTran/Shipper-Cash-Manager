@@ -5,6 +5,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tintin_money/features/shipper/presentation/widgets/remove_shipper_dialog.dart';
 import '../widgets/add_shipper_dialog.dart';
+import '../widgets/edit_shipper_dialog.dart';
 
 class ShipperManagementTab extends StatelessWidget {
   const ShipperManagementTab({super.key});
@@ -166,7 +167,19 @@ class ShipperManagementTab extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Colors.grey),
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => EditShipperDialog(
+                          id: id,
+                          name: name,
+                          phone: phone,
+                          bankName: bankName,
+                          qrCode: qrCode,
+                          avatarIcon: avatarIcon,
+                        ),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),
