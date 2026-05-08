@@ -2,9 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tintin_money/features/shipper/data/DTO/shipper_profile_dto.dart';
+import 'package:tintin_money/features/shipper/services/shipper_profile_service.dart';
 import 'package:tintin_money/features/shipper/presentation/widgets/remove_shipper_dialog.dart';
-import '../widgets/add_shipper_dialog.dart';
+import 'package:tintin_money/service_locator.dart';
 import '../widgets/edit_shipper_dialog.dart';
 
 class ShipperManagementTab extends StatelessWidget {
@@ -26,10 +27,8 @@ class ShipperManagementTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('shippers_profile')
-                .snapshots(),
+          StreamBuilder<List<ShipperProfileDto>>(
+            stream: serviceLocator<ShipperProfileService>().watchAllShippers(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Text('Đã xảy ra lỗi.');
@@ -38,27 +37,26 @@ class ShipperManagementTab extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              final data = snapshot.requireData;
-              if (data.docs.isEmpty) {
+              final shippers = snapshot.data ?? [];
+              if (shippers.isEmpty) {
                 return const Text('Không có dữ liệu.');
               }
 
               return ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount: data.docs.length,
+                itemCount: shippers.length,
                 separatorBuilder: (_, _) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
-                  final doc = data.docs[index];
-                  final docData = doc.data() as Map<String, dynamic>;
+                  final shipper = shippers[index];
                   return _buildShipperCard(
                     context: context,
-                    id: doc.id,
-                    name: docData['name'] ?? '',
-                    phone: docData['phone'] ?? '',
-                    bankName: docData['bank_name'] ?? '',
-                    qrCode: docData['qr_string'] ?? '',
-                    avatarIcon: docData['avatar'] ?? '',
+                    id: shipper.id,
+                    name: shipper.name,
+                    phone: shipper.phone,
+                    bankName: shipper.bankName,
+                    qrCode: shipper.qrString,
+                    avatarIcon: shipper.avatar,
                   );
                 },
               );

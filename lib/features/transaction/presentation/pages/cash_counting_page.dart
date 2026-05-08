@@ -266,220 +266,140 @@ class _CashCountingPageState extends State<CashCountingPage> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Calculator Panel
+                  // --- Lịch sử Giao dịch Shipper ---
+
+                  // Header Section
+                  Text(
+                    'Lịch sử Giao dịch Shipper',
+                    style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      color: const Color(0xFF131B2E),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Theo dõi chi tiết các khoản nộp tiền và phí vận hành của shipper.',
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: const Color(0xFF45464D),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Summary Widget (Asymmetric Layout)
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Kiểm đếm tiền mặt',
-                        style: GoogleFonts.inter(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF131B2E),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'TỔNG TIỀN MẶT',
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.8,
+                                  color: const Color(0xFF7C839B),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '12.500.000đ',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: _resetAll,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.refresh,
-                              size: 16,
-                              color: Color(0xFF006C4A),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Làm mới',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF006C4A),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF82F5C1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'PHÍ TÍCH LŨY',
+                                style: GoogleFonts.inter(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.8,
+                                  color: const Color(0xFF00714E),
+                                ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Text(
+                                '25.000đ',
+                                style: GoogleFonts.inter(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF00714E),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
 
-                  // Grid of Cash Cards
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 1,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 2.2,
-                        ),
-                    itemCount: _quantities.length,
-                    itemBuilder: (context, index) {
-                      final denomination = _quantities.keys.elementAt(index);
-                      final qty = _quantities[denomination]!;
-                      final itemTotal = denomination * qty;
-                      final isSelected = qty > 0;
-
-                      return GestureDetector(
-                        onTap: () => _showQuantityDialog(denomination),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            image: DecorationImage(
-                              image: AssetImage(_imageAsset[denomination]!),
-                              fit: BoxFit.cover,
-                              opacity: 0.3,
-                            ),
-                            border: Border.all(
-                              color: isSelected
-                                  ? primaryColor
-                                  : Colors.grey.shade200,
-                              width: 2,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: primaryColor,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      NumberFormat(
-                                        '#,###',
-                                        'vi_VN',
-                                      ).format(denomination),
-                                      style: GoogleFonts.inter(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w900,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    'SL: ${qty.toString().padLeft(2, '0')}',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic,
-                                      color: const Color(0xFF45464D),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Thành tiền',
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: const Color(0xFF45464D),
-                                      ),
-                                    ),
-                                    Text(
-                                      _currencyFormat.format(itemTotal),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                  // Transaction List
+                  // Transaction Card 1 — cả hai đã xác nhận
+                  _buildTransactionCard(
+                    dateTime: '23/05/2024 • 14:30',
+                    amount: '2.500.000đ',
+                    fee: 'Phí: 5.000đ',
+                    moneyConfirmed: true,
+                    feeConfirmed: true,
                   ),
+                  const SizedBox(height: 12),
 
+                  // Transaction Card 2 — cả hai đang chờ
+                  _buildTransactionCard(
+                    dateTime: '23/05/2024 • 09:15',
+                    amount: '1.800.000đ',
+                    fee: 'Phí: 5.000đ',
+                    moneyConfirmed: false,
+                    feeConfirmed: false,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Transaction Card 3 — tiền đã xác nhận, phí chờ
+                  _buildTransactionCard(
+                    dateTime: '22/05/2024 • 17:45',
+                    amount: '4.200.000đ',
+                    fee: 'Phí: 5.000đ',
+                    moneyConfirmed: true,
+                    feeConfirmed: false,
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Transaction Card 4 — cả hai đã xác nhận
+                  _buildTransactionCard(
+                    dateTime: '22/05/2024 • 11:20',
+                    amount: '3.000.000đ',
+                    fee: 'Phí: 5.000đ',
+                    moneyConfirmed: true,
+                    feeConfirmed: true,
+                  ),
                   const SizedBox(height: 24),
-                  // Total Card
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: primaryColor,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: primaryColor.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'TỔNG CỘNG',
-                              style: GoogleFonts.inter(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                                color: const Color(0xFFBEC6E0),
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              _currencyFormat.format(_totalAmount),
-                              style: GoogleFonts.inter(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                height: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                            ),
-                          ),
-                          child: const Icon(
-                            Icons.account_balance_wallet,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -523,7 +443,7 @@ class _CashCountingPageState extends State<CashCountingPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'TIẾP TỤC: TẠO MÃ QR',
+                    'TẠO GIAO DỊCH MỚI',
                     style: GoogleFonts.inter(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -535,6 +455,132 @@ class _CashCountingPageState extends State<CashCountingPage> {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionCard({
+    required String dateTime,
+    required String amount,
+    required String fee,
+    required bool moneyConfirmed,
+    required bool feeConfirmed,
+  }) {
+    final Color confirmedBg = const Color(0xFF006C4A);
+    final Color confirmedText = Colors.white;
+    final Color pendingBg = Colors.white;
+    final Color pendingBorder = const Color(0xFF006C4A);
+    final Color pendingText = const Color(0xFF006C4A);
+
+    Widget actionButton({required bool confirmed, required String label}) {
+      return Expanded(
+        child: Container(
+          height: 48,
+          decoration: BoxDecoration(
+            color: confirmed ? confirmedBg : pendingBg,
+            borderRadius: BorderRadius.circular(10),
+            border: confirmed
+                ? null
+                : Border.all(color: pendingBorder, width: 2),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                confirmed ? Icons.check_circle : Icons.pending,
+                size: 18,
+                color: confirmed ? confirmedText : pendingText,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: confirmed ? confirmedText : pendingText,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFC6C6CD)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    dateTime,
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF45464D),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    amount,
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      color: const Color(0xFF131B2E),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEAE7E9),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  fee,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF45464D),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              actionButton(confirmed: moneyConfirmed, label: 'Đã chuyển tiền'),
+              const SizedBox(width: 12),
+              actionButton(confirmed: feeConfirmed, label: 'Đã gửi phí'),
+            ],
           ),
         ],
       ),

@@ -20,11 +20,21 @@ class QrPaymentPage extends StatefulWidget {
 class _QrPaymentPageState extends State<QrPaymentPage> {
   bool _isFeeSent = false;
   final TextEditingController _noteController = TextEditingController();
-  final _currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+  final TextEditingController _amountController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController.text = NumberFormat.currency(
+      locale: 'vi_VN',
+      symbol: 'đ',
+    ).format(widget.totalAmount);
+  }
 
   @override
   void dispose() {
     _noteController.dispose();
+    _amountController.dispose();
     super.dispose();
   }
 
@@ -77,13 +87,34 @@ class _QrPaymentPageState extends State<QrPaymentPage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _currencyFormat.format(widget.totalAmount),
-                  style: GoogleFonts.inter(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.02 * 32,
-                    color: Colors.black,
+                TextField(
+                  controller: _amountController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    CurrencyInputFormatter(),
+                  ],
+                  decoration: InputDecoration(
+                    hintText: 'Nhập số tiền',
+                    hintStyle: GoogleFonts.inter(color: onSurfaceVariant),
+                    filled: true,
+                    fillColor: surfaceContainerLowest,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: outlineVariant),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: outlineVariant),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: secondaryColor, width: 2),
+                    ),
                   ),
                 ),
               ],
@@ -341,6 +372,34 @@ class _QrPaymentPageState extends State<QrPaymentPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) {
+      return newValue.copyWith(text: '');
+    }
+
+    // Chỉ lấy các chữ số từ chuỗi đang nhập
+    double value = double.parse(
+      newValue.text.replaceAll(RegExp(r'[^0-9]'), ''),
+    );
+
+    // Khởi tạo format theo chuẩn vi_VN
+    final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
+
+    // Chuyển số thành chuỗi đã format
+    String newText = formatter.format(value);
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
     );
   }
 }
