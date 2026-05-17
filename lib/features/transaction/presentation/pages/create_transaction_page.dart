@@ -385,6 +385,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
 
                     final dto = DailyTransactionDto(
                       shipperId: widget.shipperId,
+                      shipperName: shipper.name,
                       date: Timestamp.fromDate(widget.dateCreate),
                       totalAmount: amount,
                       totalFree: int.parse(fee.toStringAsFixed(0)),

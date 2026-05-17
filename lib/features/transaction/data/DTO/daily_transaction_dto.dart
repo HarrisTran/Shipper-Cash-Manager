@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DailyTransactionDto {
   final String? id;
   final String shipperId;
+  final String shipperName;
   final Timestamp date;
   final int totalAmount;
   final int totalFree;
@@ -13,6 +14,7 @@ class DailyTransactionDto {
   DailyTransactionDto({
     this.id,
     required this.shipperId,
+    required this.shipperName,
     required this.date,
     required this.totalAmount,
     required this.totalFree,
@@ -25,6 +27,7 @@ class DailyTransactionDto {
     return DailyTransactionDto(
       id: id,
       shipperId: map['shipperId'] as String,
+      shipperName: map['shipperName'] as String,
       date: map['date'] as Timestamp,
       totalAmount: map['totalAmount'] as int,
       totalFree: map['totalFree'] as int,
@@ -39,6 +42,7 @@ class DailyTransactionDto {
     return DailyTransactionDto(
       id: snapshot.id,
       shipperId: data['shipperId'] as String,
+      shipperName: data['shipperName'] as String,
       date: data['date'] as Timestamp,
       totalAmount: data['totalAmount'] as int,
       totalFree: data['totalFree'] as int,
@@ -51,6 +55,7 @@ class DailyTransactionDto {
   Map<String, dynamic> toMap() {
     return {
       'shipperId': shipperId,
+      'shipperName': shipperName,
       'date': date,
       'totalAmount': totalAmount,
       'totalFree': totalFree,
@@ -63,6 +68,7 @@ class DailyTransactionDto {
   DailyTransactionDto copyWith({
     String? id,
     String? shipperId,
+    String? shipperName,
     Timestamp? date,
     int? totalAmount,
     int? totalFree,
@@ -73,6 +79,7 @@ class DailyTransactionDto {
     return DailyTransactionDto(
       id: id ?? this.id,
       shipperId: shipperId ?? this.shipperId,
+      shipperName: shipperName ?? this.shipperName,
       date: date ?? this.date,
       totalAmount: totalAmount ?? this.totalAmount,
       totalFree: totalFree ?? this.totalFree,

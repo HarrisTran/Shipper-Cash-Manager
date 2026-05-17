@@ -5,7 +5,6 @@ import 'package:tintin_money/core/theme/app_colors.dart';
 import 'package:tintin_money/core/utils/currency_formatter.dart';
 import 'package:tintin_money/service_locator.dart';
 import 'package:tintin_money/features/transaction/services/daily_transaction_service.dart';
-import 'package:tintin_money/features/shipper/services/shipper_profile_service.dart';
 import '../../../../core/widgets/scm_card.dart';
 
 class DetailTransactionListContent extends StatefulWidget {
@@ -37,8 +36,6 @@ class _DetailTransactionListContentState
     extends State<DetailTransactionListContent> {
   final DailyTransactionService _transactionService =
       serviceLocator<DailyTransactionService>();
-  final ShipperProfileService _shipperProfileService =
-      serviceLocator<ShipperProfileService>();
 
   late Future<List<_ShipperTransactionSummary>> _summaryFuture;
 
@@ -86,25 +83,13 @@ class _DetailTransactionListContentState
     final List<_ShipperTransactionSummary> summaries = [];
 
     for (final entry in grouped.entries) {
-      final shipperId = entry.key;
       final transactions = entry.value;
 
-      // Sum total amount for this shipper
       final totalAmount = transactions.fold<int>(
         0,
         (sum, tx) => sum + tx.totalAmount,
       );
-
-      // Resolve shipper name
-      String shipperName = shipperId;
-      try {
-        final profile = await _shipperProfileService.getShipperById(shipperId);
-        if (profile != null) {
-          shipperName = profile.name;
-        }
-      } catch (_) {
-        // Fallback to shipperId if lookup fails
-      }
+      String shipperName = entry.value.first.shipperName;
 
       summaries.add(
         _ShipperTransactionSummary(
