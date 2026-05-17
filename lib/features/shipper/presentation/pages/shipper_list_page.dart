@@ -1,88 +1,46 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:tintin_money/features/shipper/data/DTO/shipper_data_dto.dart';
+import 'package:tintin_money/features/shipper/services/shipper_data_service.dart';
+import 'package:tintin_money/features/transaction/data/enums/transaction_status.dart';
+import 'package:tintin_money/service_locator.dart';
 import '../../../../features/transaction/presentation/pages/cash_counting_page.dart';
-
-enum ShipperStatus { done, pending, feePending }
 
 class ShipperListContent extends StatelessWidget {
   const ShipperListContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> shippers = [
-      {
-        'name': 'Nguyễn Văn An',
-        'phone': '090 123 4567',
-        'status': ShipperStatus.done,
-        'img': 'assets/images/avatar/Avatar Users2_1.png',
-      },
-      {
-        'name': 'Lê Thị Bìnhh',
-        'phone': '091 987 6543',
-        'status': ShipperStatus.pending,
-        'img': 'assets/images/avatar/Avatar Users2_5.png',
-      },
-      {
-        'name': 'Trần Văn Cường',
-        'phone': '098 555 1234',
-        'status': ShipperStatus.feePending,
-        'img': 'assets/images/avatar/Avatar Users2_8.png',
-      },
-      {
-        'name': 'Phạm Minh Hoàng',
-        'phone': '097 444 8888',
-        'status': ShipperStatus.done,
-        'img': 'assets/images/avatar/Avatar Users2_12.png',
-      },
-      {
-        'name': 'Đặng Thu Thảo',
-        'phone': '096 111 2222',
-        'status': ShipperStatus.pending,
-        'img': 'assets/images/avatar/Avatar Users2_15.png',
-      },
-      {
-        'name': 'Vũ Minh Đức',
-        'phone': '093 333 4444',
-        'status': ShipperStatus.done,
-        'img': 'assets/images/avatar/Avatar Users2_20.png',
-      },
-      {
-        'name': 'Hoàng Nam Anh',
-        'phone': '094 555 6666',
-        'status': ShipperStatus.feePending,
-        'img': 'assets/images/avatar/Avatar Users2_25.png',
-      },
-      {
-        'name': 'Phan Thanh Hải',
-        'phone': '092 777 8888',
-        'status': ShipperStatus.done,
-        'img': 'assets/images/avatar/Avatar Users2_30.png',
-      },
-      {
-        'name': 'Bùi Thị Tuyết',
-        'phone': '095 999 0000',
-        'status': ShipperStatus.pending,
-        'img': 'assets/images/avatar/Avatar Users2_35.png',
-      },
-      {
-        'name': 'Ngô Gia Huy',
-        'phone': '089 123 7890',
-        'status': ShipperStatus.done,
-        'img': 'assets/images/avatar/Avatar Users2_40.png',
-      },
-    ];
+    return StreamBuilder<List<ShipperDataDto>>(
+      stream: serviceLocator<ShipperDataService>().watchShippersData(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(child: Text('Đã xảy ra lỗi.'));
+        }
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: shippers.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final s = shippers[index];
-        return ShipperStateCard(
-          name: s['name'],
-          phone: s['phone'],
-          status: s['status'],
-          imageUrl: s['img'],
+        final shippers = snapshot.data ?? [];
+        if (shippers.isEmpty) {
+          return const Center(child: Text('Không có dữ liệu.'));
+        }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: shippers.length,
+          separatorBuilder: (_, _) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final s = shippers[index];
+            return ShipperStateCard(
+              id: s.id,
+              name: s.name,
+              phone: s.phone,
+              status: s.transactionStatus,
+              imageUrl: s.avatar,
+            );
+          },
         );
       },
     );
@@ -90,12 +48,14 @@ class ShipperListContent extends StatelessWidget {
 }
 
 class ShipperStateCard extends StatelessWidget {
+  final String id;
   final String name;
   final String phone;
-  final ShipperStatus status;
+  final TransactionStatus status;
   final String imageUrl;
   const ShipperStateCard({
     super.key,
+    required this.id,
     required this.name,
     required this.phone,
     required this.status,
@@ -110,6 +70,7 @@ class ShipperStateCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CashCountingPage(
+              shipperId: id,
               shipperName: name,
               shipperPhone: phone,
               shipperImageUrl: imageUrl,
@@ -128,11 +89,29 @@ class ShipperStateCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 width: 64,
                 height: 64,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  width: 64,
+                  height: 64,
+                  color: Colors.grey.shade200,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: 64,
+                  height: 64,
+                  color: Colors.grey.shade200,
+                  child: const Icon(Icons.person, color: Colors.grey),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -177,7 +156,7 @@ class ShipperStateCard extends StatelessWidget {
 }
 
 class StatusChip extends StatelessWidget {
-  final ShipperStatus status;
+  final TransactionStatus status;
 
   const StatusChip({super.key, required this.status});
 
@@ -189,23 +168,29 @@ class StatusChip extends StatelessWidget {
     String text;
 
     switch (status) {
-      case ShipperStatus.done:
+      case TransactionStatus.done:
         bgColor = const Color(0xFF006C4A);
         fgColor = Colors.white;
         icon = Icons.check_circle;
         text = 'Đã xong';
         break;
-      case ShipperStatus.feePending:
+      case TransactionStatus.freePending:
         bgColor = const Color(0xFFFEF0C7);
         fgColor = const Color(0xFFDC6803);
         icon = Icons.warning_amber_rounded;
         text = 'Chưa đưa phí';
         break;
-      case ShipperStatus.pending:
+      case TransactionStatus.bankPending:
         bgColor = const Color(0xFFFFDADA);
         fgColor = const Color(0xFF40000C);
         icon = Icons.access_time_filled;
         text = 'Chưa chuyển';
+        break;
+      case TransactionStatus.wait:
+        bgColor = const Color(0xFFFFDADA);
+        fgColor = const Color(0xFF40000C);
+        icon = Icons.access_time_filled;
+        text = 'Chờ';
         break;
     }
 

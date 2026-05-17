@@ -1,6 +1,12 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tintin_money/features/qr_scan/presentation/pages/qr_scanner_page.dart';
 
 class EditShipperDialog extends StatefulWidget {
@@ -32,7 +38,55 @@ class _EditShipperDialogState extends State<EditShipperDialog> {
   late final TextEditingController _qrController;
 
   bool _isSaving = false;
+  bool _isCompressing = false;
   String? _nameError;
+
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickAndCompressImage() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    if (pickedFile == null) return;
+
+    setState(() {
+      _isCompressing = true;
+    });
+
+    try {
+      final dir = await getTemporaryDirectory();
+      final targetPath =
+          '${dir.path}/${DateTime.now().millisecondsSinceEpoch}_compressed.jpg';
+
+      final XFile? compressedFile =
+          await FlutterImageCompress.compressAndGetFile(
+            pickedFile.path,
+            targetPath,
+            quality: 70,
+            minWidth: 500,
+            minHeight: 500,
+          );
+
+      if (compressedFile != null) {
+        setState(() {
+          _selectedImage = File(compressedFile.path);
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi khi nén ảnh: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCompressing = false;
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -69,15 +123,31 @@ class _EditShipperDialogState extends State<EditShipperDialog> {
     });
 
     try {
+      String? uploadedAvatarUrl;
+      if (_selectedImage != null) {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('shippers_avatar')
+            .child('${widget.id}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+        final uploadTask = await storageRef.putFile(_selectedImage!);
+        uploadedAvatarUrl = await uploadTask.ref.getDownloadURL();
+      }
+
+      final updateData = {
+        'name': name,
+        'phone': _phoneController.text.trim(),
+        'bank_name': _bankNameController.text.trim(),
+        'qr_string': qrString,
+      };
+
+      if (uploadedAvatarUrl != null) {
+        updateData['avatar'] = uploadedAvatarUrl;
+      }
+
       await FirebaseFirestore.instance
           .collection('shippers_profile')
           .doc(widget.id)
-          .update({
-            'name': name,
-            'phone': _phoneController.text.trim(),
-            'bank_name': _bankNameController.text.trim(),
-            'qr_string': qrString,
-          });
+          .update(updateData);
       if (mounted) {
         Navigator.pop(context);
       }
@@ -180,6 +250,75 @@ class _EditShipperDialogState extends State<EditShipperDialog> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Avatar Section
+                    Center(
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: _pickAndCompressImage,
+                            child: _isCompressing
+                                ? const CircleAvatar(
+                                    radius: 50,
+                                    backgroundColor: Color(0xFFF6F3F5),
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : _selectedImage != null
+                                ? CircleAvatar(
+                                    radius: 50,
+                                    backgroundImage: FileImage(_selectedImage!),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: widget.avatarIcon,
+                                    imageBuilder: (context, imageProvider) =>
+                                        CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: imageProvider,
+                                        ),
+                                    placeholder: (context, url) =>
+                                        const CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: Color(0xFFF6F3F5),
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                    errorWidget: (context, url, error) =>
+                                        const CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: Color(0xFFF6F3F5),
+                                          child: Icon(
+                                            Icons.person,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                  ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: _pickAndCompressImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF006C4A),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                     _buildInputLabel('HỌ VÀ TÊN'),
                     const SizedBox(height: 8),
                     _buildTextField(

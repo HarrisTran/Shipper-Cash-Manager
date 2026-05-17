@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tintin_money/features/statistic/presentation/pages/statistic_tab.dart';
+import 'package:tintin_money/features/shipper/services/shipper_data_service.dart';
+import 'package:tintin_money/service_locator.dart';
 import '../../../shipper/presentation/pages/shipper_list_page.dart';
 import '../../../shipper/presentation/pages/shipper_management_tab.dart';
 import '../../../shipper/presentation/widgets/add_shipper_dialog.dart';
@@ -16,6 +18,19 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   bool _isBottomBarVisible = true;
+  int doneCount = 0;
+  int totalCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    serviceLocator<ShipperDataService>().watchShipperStats().listen((stats) {
+      setState(() {
+        doneCount = stats.doneCount;
+        totalCount = stats.totalCount;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,20 +93,36 @@ class _MainPageState extends State<MainPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: SummaryFlashCard(
-                          title: "Shipper Chờ",
-                          value: '12',
-                          color: const Color(0xFF131B2E),
-                          textColor: Colors.white,
+                        child: StreamBuilder<int>(
+                          stream: serviceLocator<ShipperDataService>()
+                              .watchShipperStats()
+                              .map(
+                                (stats) => stats.totalCount - stats.doneCount,
+                              ),
+                          builder: (context, snapshot) {
+                            return SummaryFlashCard(
+                              title: "Shipper Chờ",
+                              value: (snapshot.data ?? 0).toString(),
+                              color: const Color(0xFF131B2E),
+                              textColor: Colors.white,
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: SummaryFlashCard(
-                          title: "Đã Hoàn Thành",
-                          value: '48',
-                          color: const Color(0xFF85F8C4),
-                          textColor: const Color(0xFF002114),
+                        child: StreamBuilder<int>(
+                          stream: serviceLocator<ShipperDataService>()
+                              .watchShipperStats()
+                              .map((stats) => stats.doneCount),
+                          builder: (context, snapshot) {
+                            return SummaryFlashCard(
+                              title: "Đã Hoàn Thành",
+                              value: (snapshot.data ?? 0).toString(),
+                              color: const Color(0xFF85F8C4),
+                              textColor: const Color(0xFF002114),
+                            );
+                          },
                         ),
                       ),
                     ],

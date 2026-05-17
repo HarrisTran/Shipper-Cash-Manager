@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tintin_money/core/utils/date_util.dart';
+import 'package:tintin_money/features/statistic/presentation/pages/detail_transaction_list_content.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/scm_card.dart';
 
@@ -12,12 +14,15 @@ class DetailTransactionPage extends StatefulWidget {
 
 class _DetailTransactionPageState extends State<DetailTransactionPage> {
   final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _fromDateController = TextEditingController(
-    text: '01/05/2024',
-  );
-  final TextEditingController _toDateController = TextEditingController(
-    text: '31/05/2024',
-  );
+  final TextEditingController _fromDateController = TextEditingController();
+  final TextEditingController _toDateController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fromDateController.text = DateUtil.format(DateTime.now());
+    _toDateController.text = DateUtil.format(DateTime.now());
+  }
 
   @override
   void dispose() {
@@ -137,6 +142,21 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                         ),
+                        onTap: () async {
+                          final pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            setState(() {
+                              _fromDateController.text = DateUtil.format(
+                                pickedDate,
+                              );
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -191,6 +211,21 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
                         ),
+                        onTap: () async {
+                          final pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                          );
+                          if (pickedDate != null) {
+                            setState(() {
+                              _toDateController.text = DateUtil.format(
+                                pickedDate,
+                              );
+                            });
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -214,111 +249,18 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
             ),
 
             // Transaction Cards
-            _buildTransactionCard(
-              name: 'Nguyễn Văn An',
-              date: '23/05/2024',
-              time: '14:30',
-              amount: '2,500,000đ',
+            DetailTransactionListContent(
+              fromDate: _fromDateController.text,
+              toDate: _toDateController.text,
             ),
-            const SizedBox(height: 16),
-            _buildTransactionCard(
-              name: 'Trần Thị Bích',
-              date: '22/05/2024',
-              time: '09:15',
-              amount: '1,820,000đ',
-            ),
-            const SizedBox(height: 16),
-            _buildTransactionCard(
-              name: 'Lê Hoàng Nam',
-              date: '20/05/2024',
-              time: '17:45',
-              amount: '4,150,000đ',
-            ),
-            const SizedBox(height: 32),
+            // _buildTransactionCard(name: 'Nguyễn Văn An', amount: '2,500,000đ'),
+            // const SizedBox(height: 16),
+            // _buildTransactionCard(name: 'Trần Thị Bích', amount: '1,820,000đ'),
+            // const SizedBox(height: 16),
+            // _buildTransactionCard(name: 'Lê Hoàng Nam', amount: '4,150,000đ'),
+            // const SizedBox(height: 32),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildTransactionCard({
-    required String name,
-    required String date,
-    required String time,
-    required String amount,
-  }) {
-    return ScmCard(
-      useLargeRadius: true,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFDAE2FD), // primary-fixed
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF131B2E),
-                ), // on-primary-fixed
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '$date • $time',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Divider(height: 1, color: Colors.grey.shade100),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                'Tổng tiền',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              Text(
-                amount,
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }

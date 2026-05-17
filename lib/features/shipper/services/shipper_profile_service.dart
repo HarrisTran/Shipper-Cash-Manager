@@ -8,10 +8,15 @@ class ShipperProfileService {
   static const String _defaultAvatarUrl =
       'https://firebasestorage.googleapis.com/v0/b/tintin-money.firebasestorage.app/o/avatar%2FUsers2_6.png?alt=media&token=d3547afe-c26f-4371-a3c1-8813f86199cf';
 
-  final ShipperProfileRepository _repository;
+  late ShipperProfileRepository _repository;
+  List<ShipperProfileDto> _shippers = [];
 
-  ShipperProfileService({ShipperProfileRepository? repository})
-      : _repository = repository ?? ShipperProfileRepository();
+  ShipperProfileService({ShipperProfileRepository? repository}) {
+    _repository = repository ?? ShipperProfileRepository();
+    _repository.watchAll().listen((shippers) {
+      _shippers = shippers;
+    });
+  }
 
   // ---------------------------------------------------------------------------
   // READ
@@ -20,6 +25,12 @@ class ShipperProfileService {
   /// Stream real-time danh sách tất cả shipper.
   Stream<List<ShipperProfileDto>> watchAllShippers() {
     return _repository.watchAll();
+  }
+
+  /// Stream real-time length of shipper list
+  ///
+  Stream<int> watchShipperCount() {
+    return _repository.watchAll().map((shippers) => shippers.length);
   }
 
   /// Lấy một shipper theo ID.
@@ -101,10 +112,7 @@ class ShipperProfileService {
 
   /// Validate dữ liệu shipper.
   /// Trả về Map<fieldName, errorMessage>. Rỗng nếu hợp lệ.
-  Map<String, String> validate({
-    String? name,
-    String? qrString,
-  }) {
+  Map<String, String> validate({String? name, String? qrString}) {
     final errors = <String, String>{};
 
     if (name != null && name.trim().isEmpty) {
@@ -116,5 +124,12 @@ class ShipperProfileService {
     }
 
     return errors;
+  }
+
+  List<ShipperProfileDto> searchByName(String query) {
+    final lowerCase = query.toLowerCase().trim();
+    return _shippers
+        .where((shipper) => shipper.name.toLowerCase().contains(lowerCase))
+        .toList();
   }
 }
