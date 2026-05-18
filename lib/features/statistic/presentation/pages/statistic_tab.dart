@@ -9,14 +9,59 @@ import 'package:tintin_money/core/theme/app_colors.dart';
 import 'package:tintin_money/features/transaction/services/daily_transaction_service.dart';
 import 'package:tintin_money/features/statistic/presentation/pages/detail_transaction_page.dart';
 
-class StatisticTab extends StatelessWidget {
+class StatisticTab extends StatefulWidget {
   const StatisticTab({super.key});
+
+  @override
+  State<StatisticTab> createState() => _StatisticTabState();
+}
+
+class _StatisticTabState extends State<StatisticTab> {
+  late final Stream<Map<String, double>> _cashSummaryStream;
+  late final Stream<({int doneCount, int totalCount})> _statsStream;
+  late final Future<List<int>> _shortHistoryFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final today = DateTime.now();
+    final yesterday = today.subtract(const Duration(days: 1));
+    final shipperService = serviceLocator<ShipperDataService>();
+    final transactionService = serviceLocator<DailyTransactionService>();
+
+    _cashSummaryStream = Rx.combineLatest2(
+      shipperService.watchDailyTotal(date: today),
+      shipperService.watchDailyTotal(date: yesterday),
+      (double todayTotal, double yesterdayTotal) {
+        return {
+          'today': todayTotal,
+          'yesterday': yesterdayTotal,
+          'diffPercent': yesterdayTotal != 0
+              ? (todayTotal - yesterdayTotal) / yesterdayTotal * 100
+              : 0.0,
+        };
+      },
+    );
+
+    _statsStream = shipperService.watchShipperStats();
+
+    final oneDayAgo = today.subtract(const Duration(days: 1));
+    final twoDayAgo = today.subtract(const Duration(days: 2));
+    final threeDayAgo = today.subtract(const Duration(days: 3));
+
+    _shortHistoryFuture = Future.wait([
+      transactionService.getDailyTotal(date: oneDayAgo),
+      transactionService.getDailyTotal(date: twoDayAgo),
+      transactionService.getDailyTotal(date: threeDayAgo),
+    ]);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,27 +143,8 @@ class StatisticTab extends StatelessWidget {
   }
 
   Widget _cashSummary() {
-    final today = DateTime.now();
-    final yesterday = today.subtract(const Duration(days: 1));
-
-    final service = serviceLocator<ShipperDataService>();
-
-    final cashSummaryStream = Rx.combineLatest2(
-      service.watchDailyTotal(date: today),
-      service.watchDailyTotal(date: yesterday),
-      (double today, double yesterday) {
-        return {
-          'today': today,
-          'yesterday': yesterday,
-          'diffPercent': yesterday != 0
-              ? (today - yesterday) / yesterday * 100
-              : 0,
-        };
-      },
-    );
-
-    return StreamBuilder(
-      stream: cashSummaryStream,
+    return StreamBuilder<Map<String, double>>(
+      stream: _cashSummaryStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const CircularProgressIndicator();
@@ -197,11 +223,8 @@ class StatisticTab extends StatelessWidget {
   }
 
   Widget _shippingSummary() {
-    final statsStream = serviceLocator<ShipperDataService>()
-        .watchShipperStats();
-
     return StreamBuilder<({int doneCount, int totalCount})>(
-      stream: statsStream,
+      stream: _statsStream,
       builder: (context, snapshot) {
         final completed = snapshot.data?.doneCount ?? 0;
         final total = snapshot.data?.totalCount ?? 0;
@@ -303,18 +326,12 @@ class StatisticTab extends StatelessWidget {
   }
 
   Widget _shortHistory() {
-    final service = serviceLocator<DailyTransactionService>();
-
     final oneDayAgo = DateTime.now().subtract(const Duration(days: 1));
     final twoDayAgo = DateTime.now().subtract(const Duration(days: 2));
     final threeDayAgo = DateTime.now().subtract(const Duration(days: 3));
 
     return FutureBuilder<List<int>>(
-      future: Future.wait([
-        service.getDailyTotal(date: oneDayAgo),
-        service.getDailyTotal(date: twoDayAgo),
-        service.getDailyTotal(date: threeDayAgo),
-      ]),
+      future: _shortHistoryFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Padding(

@@ -6,15 +6,28 @@ import 'package:tintin_money/features/transaction/data/enums/transaction_status.
 import 'package:tintin_money/service_locator.dart';
 import '../../../../features/transaction/presentation/pages/cash_counting_page.dart';
 
-class ShipperListContent extends StatelessWidget {
+class ShipperListContent extends StatefulWidget {
   const ShipperListContent({super.key, this.searchQuery = ''});
 
   final String searchQuery;
 
   @override
+  State<ShipperListContent> createState() => _ShipperListContentState();
+}
+
+class _ShipperListContentState extends State<ShipperListContent> {
+  late final Stream<List<ShipperDataDto>> _shipperStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _shipperStream = serviceLocator<ShipperDataService>().watchShippersData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<ShipperDataDto>>(
-      stream: serviceLocator<ShipperDataService>().watchShippersData(),
+      stream: _shipperStream,
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Center(child: Text('Đã xảy ra lỗi.'));
@@ -26,7 +39,7 @@ class ShipperListContent extends StatelessWidget {
         final shippers = snapshot.data ?? [];
         final filteredShippers = shippers
             .where(
-              (s) => s.name.toLowerCase().contains(searchQuery.toLowerCase()),
+              (s) => s.name.toLowerCase().contains(widget.searchQuery.toLowerCase()),
             )
             .toList();
         if (filteredShippers.isEmpty) {
