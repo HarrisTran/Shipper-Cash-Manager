@@ -169,14 +169,20 @@ class StatisticTab extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.trending_up,
-                    color: AppColors.trendingUp,
+                    data['diffPercent']! > 0
+                        ? Icons.trending_up
+                        : Icons.trending_down,
+                    color: data['diffPercent']! > 0
+                        ? AppColors.trendingUp
+                        : AppColors.trendingDown,
                     size: 20,
                   ),
                   Text(
                     "${data['diffPercent']!.toStringAsFixed(2)}% so với hôm qua",
                     style: TextStyle(
-                      color: AppColors.trendingUp,
+                      color: data['diffPercent']! > 0
+                          ? AppColors.trendingUp
+                          : AppColors.trendingDown,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),

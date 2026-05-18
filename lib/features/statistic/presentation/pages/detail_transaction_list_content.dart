@@ -10,10 +10,12 @@ import '../../../../core/widgets/scm_card.dart';
 class DetailTransactionListContent extends StatefulWidget {
   final String fromDate;
   final String toDate;
+  final String searchQuery;
   const DetailTransactionListContent({
     super.key,
     required this.fromDate,
     required this.toDate,
+    required this.searchQuery,
   });
 
   @override
@@ -37,12 +39,17 @@ class _DetailTransactionListContentState
   final DailyTransactionService _transactionService =
       serviceLocator<DailyTransactionService>();
 
-  late Future<List<_ShipperTransactionSummary>> _summaryFuture;
+  List<_ShipperTransactionSummary> _masterSummaries = [];
+
+  List<_ShipperTransactionSummary> _filteredSummaries = [];
+
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _summaryFuture = _fetchGroupedTransactions();
+    _loadFromDatabase();
   }
 
   @override
@@ -50,10 +57,89 @@ class _DetailTransactionListContentState
     super.didUpdateWidget(oldWidget);
     if (oldWidget.fromDate != widget.fromDate ||
         oldWidget.toDate != widget.toDate) {
+      _loadFromDatabase();
+    } else if (oldWidget.searchQuery != widget.searchQuery) {
+      _applyLocalFilter();
+    }
+  }
+
+  Future<void> _loadFromDatabase() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final from = _parseDate(widget.fromDate);
+      final to = DateTime(
+        _parseDate(widget.toDate).year,
+        _parseDate(widget.toDate).month,
+        _parseDate(widget.toDate).day,
+        23,
+        59,
+        59,
+        999,
+      );
+
+      final grouped = await _transactionService.getByTimeRangeGroupByShipper(
+        from: from,
+        to: to,
+      );
+      final List<_ShipperTransactionSummary> summaries = [];
+
+      for (final entry in grouped.entries) {
+        final totalAmount = entry.value.fold<int>(
+          0,
+          (sum, tx) => sum + tx.totalAmount,
+        );
+        summaries.add(
+          _ShipperTransactionSummary(
+            shipperName: entry.value.first.shipperName,
+            totalAmount: totalAmount,
+          ),
+        );
+      }
+
+      summaries.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
+
+      _masterSummaries = summaries;
+      _applyLocalFilter(); // Áp dụng filter chuỗi ngay sau khi có dữ liệu mới
+    } catch (e) {
       setState(() {
-        _summaryFuture = _fetchGroupedTransactions();
+        _errorMessage = 'Đã xảy ra lỗi khi tải dữ liệu';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
+  }
+
+  void _applyLocalFilter() {
+    setState(() {
+      if (widget.searchQuery.isEmpty) {
+        _filteredSummaries = List.from(_masterSummaries);
+      } else {
+        final query = _toUnsignedString(widget.searchQuery);
+        _filteredSummaries = _masterSummaries.where((summary) {
+          final name = _toUnsignedString(summary.shipperName);
+          return name.contains(query);
+        }).toList();
+      }
+    });
+  }
+
+  // to unsigned string
+  String _toUnsignedString(String value) {
+    var withSign =
+        "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ";
+    var noSign =
+        "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyydAAAAAAAAAAAAAAAAAEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYYD";
+    String output = value;
+    for (int i = 0; i < withSign.length; i++) {
+      output = output.replaceAll(withSign[i], noSign[i]);
+    }
+    return output.toLowerCase();
   }
 
   /// Parses a date string in `dd/MM/yyyy` format to [DateTime].
@@ -102,66 +188,66 @@ class _DetailTransactionListContentState
     // Sort by totalAmount descending
     summaries.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
 
-    return summaries;
+    // Filter by searchQuery
+    final filteredSummaries = summaries.where((summary) {
+      return summary.shipperName.toLowerCase().contains(
+        widget.searchQuery.toLowerCase(),
+      );
+    }).toList();
+
+    return filteredSummaries;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<_ShipperTransactionSummary>>(
-      future: _summaryFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 32),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
+    if (_isLoading) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 32),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
-        if (snapshot.hasError) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text(
-                'Đã xảy ra lỗi khi tải dữ liệu',
-                style: GoogleFonts.inter(color: Colors.red, fontSize: 14),
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Text(
+            _errorMessage!,
+            style: GoogleFonts.inter(color: Colors.red, fontSize: 14),
+          ),
+        ),
+      );
+    }
+
+    if (_filteredSummaries.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 32),
+          child: Text(
+            'Không có giao dịch phù hợp',
+            style: GoogleFonts.inter(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: _filteredSummaries
+          .map(
+            (summary) => Padding(
+              padding: const EdgeInsets.only(bottom: 16),
+              child: _buildTransactionCard(
+                name: summary.shipperName,
+                amount: CurrencyFormatter.format(summary.totalAmount),
               ),
             ),
-          );
-        }
-
-        final summaries = snapshot.data ?? [];
-
-        if (summaries.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text(
-                'Không có giao dịch trong khoảng thời gian này',
-                style: GoogleFonts.inter(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          );
-        }
-
-        return Column(
-          children: summaries
-              .map(
-                (summary) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: _buildTransactionCard(
-                    name: summary.shipperName,
-                    amount: CurrencyFormatter.format(summary.totalAmount),
-                  ),
-                ),
-              )
-              .toList(),
-        );
-      },
+          )
+          .toList(),
     );
   }
 

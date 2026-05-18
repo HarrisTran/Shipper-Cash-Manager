@@ -21,6 +21,8 @@ class _MainPageState extends State<MainPage> {
   int doneCount = 0;
   int totalCount = 0;
 
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -40,8 +42,8 @@ class _MainPageState extends State<MainPage> {
         title: Row(
           children: [
             const CircleAvatar(
-              backgroundImage: NetworkImage(
-                'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+              backgroundImage: AssetImage(
+                'assets/images/icon_app/ic_launcher.png',
               ),
             ),
             const SizedBox(width: 12),
@@ -88,7 +90,11 @@ class _MainPageState extends State<MainPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SearchBarWidget(),
+                  SearchBarWidget(
+                    onSearchBarChanged: (query) {
+                      setState(() => _searchQuery = query);
+                    },
+                  ),
                   const SizedBox(height: 24),
                   Row(
                     children: [
@@ -149,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const ShipperListContent(),
+                  ShipperListContent(searchQuery: _searchQuery),
                   const SizedBox(height: 20),
                 ],
               ),
@@ -267,7 +273,9 @@ class _MainPageState extends State<MainPage> {
 }
 
 class SearchBarWidget extends StatelessWidget {
-  const SearchBarWidget({super.key});
+  const SearchBarWidget({super.key, required this.onSearchBarChanged});
+
+  final ValueChanged<String> onSearchBarChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -286,6 +294,7 @@ class SearchBarWidget extends StatelessWidget {
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
       ),
+      onChanged: onSearchBarChanged,
     );
   }
 }

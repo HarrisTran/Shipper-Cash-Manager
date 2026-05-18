@@ -7,7 +7,9 @@ import 'package:tintin_money/service_locator.dart';
 import '../../../../features/transaction/presentation/pages/cash_counting_page.dart';
 
 class ShipperListContent extends StatelessWidget {
-  const ShipperListContent({super.key});
+  const ShipperListContent({super.key, this.searchQuery = ''});
+
+  final String searchQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -22,17 +24,22 @@ class ShipperListContent extends StatelessWidget {
         }
 
         final shippers = snapshot.data ?? [];
-        if (shippers.isEmpty) {
+        final filteredShippers = shippers
+            .where(
+              (s) => s.name.toLowerCase().contains(searchQuery.toLowerCase()),
+            )
+            .toList();
+        if (filteredShippers.isEmpty) {
           return const Center(child: Text('Không có dữ liệu.'));
         }
 
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: shippers.length,
+          itemCount: filteredShippers.length,
           separatorBuilder: (_, _) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final s = shippers[index];
+            final s = filteredShippers[index];
             return ShipperStateCard(
               id: s.id,
               name: s.name,

@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:tintin_money/core/utils/date_util.dart';
 import 'package:tintin_money/features/statistic/presentation/pages/detail_transaction_list_content.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/scm_card.dart';
 
 class DetailTransactionPage extends StatefulWidget {
   const DetailTransactionPage({super.key});
@@ -87,6 +86,9 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
                   ),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {});
+              },
             ),
             const SizedBox(height: 20),
 
@@ -252,6 +254,7 @@ class _DetailTransactionPageState extends State<DetailTransactionPage> {
             DetailTransactionListContent(
               fromDate: _fromDateController.text,
               toDate: _toDateController.text,
+              searchQuery: _searchController.text,
             ),
             // _buildTransactionCard(name: 'Nguyễn Văn An', amount: '2,500,000đ'),
             // const SizedBox(height: 16),
