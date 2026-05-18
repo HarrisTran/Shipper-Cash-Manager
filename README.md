@@ -12,6 +12,3 @@
 flutter pub get
 flutter run
 ```
-
----
-*Dự án đang trong quá trình phát triển.*
