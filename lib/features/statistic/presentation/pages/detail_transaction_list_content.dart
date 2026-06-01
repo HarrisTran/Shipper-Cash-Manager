@@ -5,6 +5,7 @@ import 'package:tintin_money/core/theme/app_colors.dart';
 import 'package:tintin_money/core/utils/currency_formatter.dart';
 import 'package:tintin_money/service_locator.dart';
 import 'package:tintin_money/features/transaction/services/daily_transaction_service.dart';
+import 'package:tintin_money/features/transaction/data/DTO/daily_transaction_dto.dart';
 import '../../../../core/widgets/scm_card.dart';
 
 class DetailTransactionListContent extends StatefulWidget {
@@ -23,25 +24,16 @@ class DetailTransactionListContent extends StatefulWidget {
       _DetailTransactionListContentState();
 }
 
-/// Represents a shipper's aggregated transaction data for display.
-class _ShipperTransactionSummary {
-  final String shipperName;
-  final int totalAmount;
-
-  _ShipperTransactionSummary({
-    required this.shipperName,
-    required this.totalAmount,
-  });
-}
-
 class _DetailTransactionListContentState
     extends State<DetailTransactionListContent> {
   final DailyTransactionService _transactionService =
       serviceLocator<DailyTransactionService>();
 
-  List<_ShipperTransactionSummary> _masterSummaries = [];
+  static const int _pageSize = 10;
 
-  List<_ShipperTransactionSummary> _filteredSummaries = [];
+  List<DailyTransactionDto> _masterTransactions = [];
+  List<DailyTransactionDto> _filteredTransactions = [];
+  int _currentPage = 0;
 
   bool _isLoading = false;
   String? _errorMessage;
@@ -81,29 +73,17 @@ class _DetailTransactionListContentState
         999,
       );
 
-      final grouped = await _transactionService.getByTimeRangeGroupByShipper(
+      final transactions = await _transactionService.getByTimeRange(
         from: from,
         to: to,
       );
-      final List<_ShipperTransactionSummary> summaries = [];
 
-      for (final entry in grouped.entries) {
-        final totalAmount = entry.value.fold<int>(
-          0,
-          (sum, tx) => sum + tx.totalAmount,
-        );
-        summaries.add(
-          _ShipperTransactionSummary(
-            shipperName: entry.value.first.shipperName,
-            totalAmount: totalAmount,
-          ),
-        );
-      }
+      // Sort by date descending (newest first)
+      transactions.sort((a, b) => b.date.compareTo(a.date));
 
-      summaries.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
-
-      _masterSummaries = summaries;
-      _applyLocalFilter(); // Áp dụng filter chuỗi ngay sau khi có dữ liệu mới
+      _masterTransactions = transactions;
+      _currentPage = 0;
+      _applyLocalFilter();
     } catch (e) {
       setState(() {
         _errorMessage = 'Đã xảy ra lỗi khi tải dữ liệu';
@@ -117,12 +97,13 @@ class _DetailTransactionListContentState
 
   void _applyLocalFilter() {
     setState(() {
+      _currentPage = 0;
       if (widget.searchQuery.isEmpty) {
-        _filteredSummaries = List.from(_masterSummaries);
+        _filteredTransactions = List.from(_masterTransactions);
       } else {
         final query = _toUnsignedString(widget.searchQuery);
-        _filteredSummaries = _masterSummaries.where((summary) {
-          final name = _toUnsignedString(summary.shipperName);
+        _filteredTransactions = _masterTransactions.where((tx) {
+          final name = _toUnsignedString(tx.shipperName);
           return name.contains(query);
         }).toList();
       }
@@ -148,54 +129,33 @@ class _DetailTransactionListContentState
     return format.parse(dateStr);
   }
 
-  /// Fetches transactions grouped by shipper and resolves shipper names.
-  Future<List<_ShipperTransactionSummary>> _fetchGroupedTransactions() async {
-    final from = _parseDate(widget.fromDate);
-    final to = DateTime(
-      _parseDate(widget.toDate).year,
-      _parseDate(widget.toDate).month,
-      _parseDate(widget.toDate).day,
-      23,
-      59,
-      59,
-      999,
-    );
+  int get _totalPages => (_filteredTransactions.length / _pageSize).ceil();
 
-    final grouped = await _transactionService.getByTimeRangeGroupByShipper(
-      from: from,
-      to: to,
-    );
+  List<DailyTransactionDto> get _currentPageItems {
+    final start = _currentPage * _pageSize;
+    final end = (start + _pageSize).clamp(0, _filteredTransactions.length);
+    return _filteredTransactions.sublist(start, end);
+  }
 
-    final List<_ShipperTransactionSummary> summaries = [];
+  String _resolveTransactionType(DailyTransactionDto tx) {
+    if (tx.isFee) return 'Tiền phí';
+    if (tx.isDeposit) return 'Tiền gửi';
+    if (tx.isReceived) return 'Tiền nhận';
+    return 'Không xác định';
+  }
 
-    for (final entry in grouped.entries) {
-      final transactions = entry.value;
+  Color _resolveTypeColor(DailyTransactionDto tx) {
+    if (tx.isFee) return AppColors.success;
+    if (tx.isDeposit) return const Color(0xFFE67E22);
+    if (tx.isReceived) return const Color(0xFF3B82F6);
+    return AppColors.textSecondary;
+  }
 
-      final totalAmount = transactions.fold<int>(
-        0,
-        (sum, tx) => sum + tx.totalAmount,
-      );
-      String shipperName = entry.value.first.shipperName;
-
-      summaries.add(
-        _ShipperTransactionSummary(
-          shipperName: shipperName,
-          totalAmount: totalAmount,
-        ),
-      );
-    }
-
-    // Sort by totalAmount descending
-    summaries.sort((a, b) => b.totalAmount.compareTo(a.totalAmount));
-
-    // Filter by searchQuery
-    final filteredSummaries = summaries.where((summary) {
-      return summary.shipperName.toLowerCase().contains(
-        widget.searchQuery.toLowerCase(),
-      );
-    }).toList();
-
-    return filteredSummaries;
+  IconData _resolveTypeIcon(DailyTransactionDto tx) {
+    if (tx.isFee) return Icons.receipt_long;
+    if (tx.isDeposit) return Icons.arrow_upward;
+    if (tx.isReceived) return Icons.arrow_downward;
+    return Icons.help_outline;
   }
 
   @override
@@ -221,7 +181,7 @@ class _DetailTransactionListContentState
       );
     }
 
-    if (_filteredSummaries.isEmpty) {
+    if (_filteredTransactions.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 32),
@@ -236,85 +196,289 @@ class _DetailTransactionListContentState
       );
     }
 
+    final pageItems = _currentPageItems;
+    final startIndex = _currentPage * _pageSize;
+
     return Column(
-      children: _filteredSummaries
-          .map(
-            (summary) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: _buildTransactionCard(
-                name: summary.shipperName,
-                amount: CurrencyFormatter.format(summary.totalAmount),
+      children: [
+        // Transaction count header
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Tổng: ${_filteredTransactions.length} giao dịch',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          )
-          .toList(),
+              if (_totalPages > 1)
+                Text(
+                  'Trang ${_currentPage + 1}/$_totalPages',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+            ],
+          ),
+        ),
+
+        // Transaction list
+        ...pageItems.asMap().entries.map((entry) {
+          final index = startIndex + entry.key;
+          final tx = entry.value;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _buildTransactionItem(tx, index + 1),
+          );
+        }),
+
+        // Pagination controls
+        if (_totalPages > 1)
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            child: _buildPaginationControls(),
+          ),
+      ],
     );
   }
 
-  Widget _buildTransactionCard({required String name, required String amount}) {
+  Widget _buildTransactionItem(DailyTransactionDto tx, int orderNumber) {
+    final typeLabel = _resolveTransactionType(tx);
+    final typeColor = _resolveTypeColor(tx);
+    final typeIcon = _resolveTypeIcon(tx);
+    final dateTime = tx.date.toDate();
+    final timeStr = DateFormat('HH:mm - dd/MM/yyyy').format(dateTime);
+
     return ScmCard(
       useLargeRadius: true,
-      padding: const EdgeInsets.all(20),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFDAE2FD), // primary-fixed
-                  shape: BoxShape.circle,
+          // Type icon
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: typeColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(typeIcon, color: typeColor, size: 22),
+          ),
+          const SizedBox(width: 12),
+
+          // Name + type + time
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tx.shipperName,
+                  style: GoogleFonts.inter(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: AppColors.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                child: const Icon(
-                  Icons.person,
-                  color: Color(0xFF131B2E),
-                ), // on-primary-fixed
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 3),
+                Row(
                   children: [
-                    Text(
-                      name,
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: AppColors.textPrimary,
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: typeColor.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        typeLabel,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: typeColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        timeStr,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          Divider(height: 1, color: Colors.grey.shade100),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                'Tổng tiền',
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              Text(
-                amount,
-                style: GoogleFonts.inter(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24,
-                  color: Colors.black,
-                ),
-              ),
-            ],
+          const SizedBox(width: 8),
+
+          // Amount
+          Text(
+            CurrencyFormatter.format(tx.amount),
+            style: GoogleFonts.inter(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: AppColors.textPrimary,
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Previous button
+        _buildPageButton(
+          icon: Icons.chevron_left,
+          enabled: _currentPage > 0,
+          onTap: () {
+            setState(() {
+              _currentPage--;
+            });
+          },
+        ),
+        const SizedBox(width: 8),
+
+        // Page number buttons
+        ..._buildPageNumbers(),
+
+        const SizedBox(width: 8),
+
+        // Next button
+        _buildPageButton(
+          icon: Icons.chevron_right,
+          enabled: _currentPage < _totalPages - 1,
+          onTap: () {
+            setState(() {
+              _currentPage++;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildPageNumbers() {
+    final List<Widget> buttons = [];
+    final total = _totalPages;
+
+    // Show max 5 page buttons with ellipsis
+    List<int> pageNumbers = [];
+    if (total <= 5) {
+      pageNumbers = List.generate(total, (i) => i);
+    } else {
+      pageNumbers.add(0);
+      if (_currentPage > 2) {
+        pageNumbers.add(-1); // ellipsis
+      }
+      for (int i = _currentPage - 1; i <= _currentPage + 1; i++) {
+        if (i > 0 && i < total - 1) {
+          pageNumbers.add(i);
+        }
+      }
+      if (_currentPage < total - 3) {
+        pageNumbers.add(-1); // ellipsis
+      }
+      pageNumbers.add(total - 1);
+    }
+
+    for (final page in pageNumbers) {
+      if (page == -1) {
+        buttons.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Text(
+              '…',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+        );
+      } else {
+        final isActive = page == _currentPage;
+        buttons.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: () {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: isActive
+                      ? null
+                      : Border.all(color: AppColors.outline),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${page + 1}',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: isActive ? FontWeight.bold : FontWeight.w500,
+                    color: isActive ? Colors.white : AppColors.textSecondary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    return buttons;
+  }
+
+  Widget _buildPageButton({
+    required IconData icon,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: enabled ? onTap : null,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: enabled ? AppColors.surface : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: enabled ? AppColors.outline : const Color(0xFFE2E8F0),
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          size: 20,
+          color: enabled ? AppColors.textPrimary : const Color(0xFFCBD5E1),
+        ),
       ),
     );
   }

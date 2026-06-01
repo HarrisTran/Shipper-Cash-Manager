@@ -44,12 +44,7 @@ class ShipperDataService {
     final today = date ?? DateTime.now();
     return _dailyTransactionRepository
         .watchByDate(today)
-        .map(
-          (transactions) => transactions.fold(
-            0,
-            (sum, transaction) => sum + transaction.totalAmount,
-          ),
-        );
+        .map((transactions) => transactions.fold(0, (sum, transaction) => 0));
   }
 
   List<ShipperDataDto> _mergeFunc(
@@ -77,19 +72,27 @@ class ShipperDataService {
 
   TransactionStatus _resolveStatus(List<DailyTransactionDto> transactions) {
     if (transactions.isEmpty) return TransactionStatus.wait;
-    bool hasBankError = transactions.any((t) => t.bankConfirmed == false);
-    bool hasFeeError = transactions.any((t) => t.feeConfirmed == false);
-    if (hasBankError && hasFeeError) {
-      return TransactionStatus.wait;
+
+    int totalReceived = 0;
+    int totalDeposit = 0;
+    int totalFee = 0;
+
+    for (final tx in transactions) {
+      if (tx.isReceived) {
+        totalReceived += tx.amount;
+      }
+      if (tx.isDeposit) {
+        totalDeposit += tx.amount;
+      }
+      if (tx.isFee) {
+        totalFee += tx.amount;
+      }
     }
 
-    if (!hasBankError && !hasFeeError) {
-      return TransactionStatus.done;
-    }
-    if (hasBankError) {
-      return TransactionStatus.bankPending;
+    if (totalReceived != totalDeposit || totalFee == 0) {
+      return TransactionStatus.notdone;
     }
 
-    return TransactionStatus.freePending;
+    return TransactionStatus.done;
   }
 }

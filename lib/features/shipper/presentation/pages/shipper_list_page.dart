@@ -39,7 +39,9 @@ class _ShipperListContentState extends State<ShipperListContent> {
         final shippers = snapshot.data ?? [];
         final filteredShippers = shippers
             .where(
-              (s) => s.name.toLowerCase().contains(widget.searchQuery.toLowerCase()),
+              (s) => s.name.toLowerCase().contains(
+                widget.searchQuery.toLowerCase(),
+              ),
             )
             .toList();
         if (filteredShippers.isEmpty) {
@@ -192,19 +194,13 @@ class StatusChip extends StatelessWidget {
         bgColor = const Color(0xFF006C4A);
         fgColor = Colors.white;
         icon = Icons.check_circle;
-        text = 'Đã xong';
+        text = 'Xong';
         break;
-      case TransactionStatus.freePending:
+      case TransactionStatus.notdone:
         bgColor = const Color(0xFFFEF0C7);
-        fgColor = const Color(0xFFDC6803);
+        fgColor = const Color.fromARGB(255, 255, 0, 0);
         icon = Icons.warning_amber_rounded;
-        text = 'Chưa đưa phí';
-        break;
-      case TransactionStatus.bankPending:
-        bgColor = const Color(0xFFFFDADA);
-        fgColor = const Color(0xFF40000C);
-        icon = Icons.access_time_filled;
-        text = 'Chưa chuyển';
+        text = 'Chưa xong';
         break;
       case TransactionStatus.wait:
         bgColor = const Color(0xFFFFDADA);

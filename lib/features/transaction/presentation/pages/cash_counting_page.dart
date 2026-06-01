@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:tintin_money/features/transaction/presentation/pages/daily_transaction_history.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'create_transaction_page.dart';
-
 class CashCountingPage extends StatefulWidget {
   final String shipperId;
   final String shipperName;
@@ -215,58 +213,6 @@ class _CashCountingPageState extends State<CashCountingPage> {
                   // Summary section
                   DailyTransactionHistory(shipperId: widget.shipperId),
                   const SizedBox(height: 24),
-                ],
-              ),
-            ),
-          ),
-
-          // Fixed Bottom Action
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  scaffoldBgColor,
-                  scaffoldBgColor.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CreateTransactionPage(
-                      shipperId: widget.shipperId,
-                      dateCreate: DateTime.now(),
-                    ),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'TẠO GIAO DỊCH MỚI',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Icon(Icons.qr_code_2),
                 ],
               ),
             ),

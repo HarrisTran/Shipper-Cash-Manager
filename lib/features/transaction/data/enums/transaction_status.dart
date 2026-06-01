@@ -1,1 +1,5 @@
-enum TransactionStatus { wait, bankPending, freePending, done }
+enum TransactionStatus {
+  wait,
+  notdone,
+  done,
+}

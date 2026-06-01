@@ -15,24 +15,19 @@ class EditTransactionPage extends StatefulWidget {
 }
 
 class _EditTransactionPageState extends State<EditTransactionPage> {
-  late bool _isFeeSent;
-  late TextEditingController _noteController;
   late TextEditingController _amountController;
 
   @override
   void initState() {
     super.initState();
-    _isFeeSent = widget.transaction.feeConfirmed;
-    _noteController = TextEditingController(text: widget.transaction.note);
     final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ');
     _amountController = TextEditingController(
-      text: formatter.format(widget.transaction.totalAmount),
+      text: formatter.format(widget.transaction.amount),
     );
   }
 
   @override
   void dispose() {
-    _noteController.dispose();
     _amountController.dispose();
     super.dispose();
   }
@@ -40,11 +35,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   @override
   Widget build(BuildContext context) {
     final scaffoldBgColor = const Color(0xFFFCF8FA);
-    final secondaryColor = const Color(0xFF006C4A);
     final outlineVariant = const Color(0xFFC6C6CD);
     final onSurfaceVariant = const Color(0xFF45464D);
-    final surfaceContainerLowest = const Color(0xFFFFFFFF);
-    final formatter = NumberFormat('#,###', 'vi_VN');
 
     return Scaffold(
       backgroundColor: scaffoldBgColor,
@@ -115,127 +107,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             ),
             const SizedBox(height: 24),
 
-            // Action section
-            Column(
-              children: [
-                Container(
-                  height: 56,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF6F3F5),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: outlineVariant),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            'Đã gửi phí',
-                            style: GoogleFonts.inter(
-                              fontSize: 20,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            '(${formatter.format(widget.transaction.totalFree)}đ)',
-                            style: GoogleFonts.inter(
-                              fontSize: 16,
-                              color: onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Switch(
-                        value: _isFeeSent,
-                        onChanged: (val) {
-                          setState(() {
-                            _isFeeSent = val;
-                          });
-                        },
-                        activeThumbColor: Colors.white,
-                        activeTrackColor: secondaryColor,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _noteController,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập ghi chú (nếu có)',
-                    hintStyle: GoogleFonts.inter(color: onSurfaceVariant),
-                    filled: true,
-                    fillColor: surfaceContainerLowest,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 16,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: outlineVariant),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: outlineVariant),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: secondaryColor, width: 2),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 32),
-
-            // Confirm Button
-            ElevatedButton(
-              onPressed: () async {
-                if (widget.transaction.id == null) return;
-
-                final updateData = {
-                  'feeConfirmed': _isFeeSent,
-                  'note': _noteController.text.trim(),
-                };
-
-                await serviceLocator<DailyTransactionService>().update(
-                  widget.transaction.id!,
-                  updateData,
-                );
-
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 56),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 4,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.edit, size: 24),
-                  const SizedBox(width: 12),
-                  Text(
-                    'THAY ĐỔI',
-                    style: GoogleFonts.inter(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
+            // Action section removed as per requirements
 
             // Delete Button
             ElevatedButton(

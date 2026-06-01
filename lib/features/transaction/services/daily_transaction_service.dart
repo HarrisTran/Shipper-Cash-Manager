@@ -61,7 +61,11 @@ class DailyTransactionService {
     final transactions = await getByTimeRange(from: startOfDay, to: endOfDay);
     return transactions.fold<int>(
       0,
-      (previousValue, element) => previousValue + element.totalAmount,
+      (previousValue, element) {
+        if (element.isReceived) return previousValue + element.amount;
+        if (element.isDeposit) return previousValue - element.amount;
+        return previousValue;
+      },
     );
   }
 

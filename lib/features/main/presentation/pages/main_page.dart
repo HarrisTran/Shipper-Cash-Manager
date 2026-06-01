@@ -97,44 +97,6 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const SizedBox(height: 24),
                   Row(
-                    children: [
-                      Expanded(
-                        child: StreamBuilder<int>(
-                          stream: serviceLocator<ShipperDataService>()
-                              .watchShipperStats()
-                              .map(
-                                (stats) => stats.totalCount - stats.doneCount,
-                              ),
-                          builder: (context, snapshot) {
-                            return SummaryFlashCard(
-                              title: "Shipper Chờ",
-                              value: (snapshot.data ?? 0).toString(),
-                              color: const Color(0xFF131B2E),
-                              textColor: Colors.white,
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: StreamBuilder<int>(
-                          stream: serviceLocator<ShipperDataService>()
-                              .watchShipperStats()
-                              .map((stats) => stats.doneCount),
-                          builder: (context, snapshot) {
-                            return SummaryFlashCard(
-                              title: "Đã Hoàn Thành",
-                              value: (snapshot.data ?? 0).toString(),
-                              color: const Color(0xFF85F8C4),
-                              textColor: const Color(0xFF002114),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -295,57 +257,6 @@ class SearchBarWidget extends StatelessWidget {
         ),
       ),
       onChanged: onSearchBarChanged,
-    );
-  }
-}
-
-class SummaryFlashCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final Color color;
-  final Color textColor;
-
-  const SummaryFlashCard({
-    super.key,
-    required this.title,
-    required this.value,
-    required this.color,
-    required this.textColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.3,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(20), // Bo góc 20px như Stitch
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title.toUpperCase(), // Viết hoa title như demo
-              style: TextStyle(
-                color: textColor.withValues(alpha: 0.7),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 48, // Số to rõ nổi bật
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

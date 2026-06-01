@@ -75,8 +75,6 @@ class _StatisticTabState extends State<StatisticTab> {
               ),
             ),
             const SizedBox(height: 24),
-            _cashSummary(),
-            const SizedBox(height: 12),
             _shippingSummary(),
             const SizedBox(height: 12),
             Row(
@@ -139,86 +137,6 @@ class _StatisticTabState extends State<StatisticTab> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _cashSummary() {
-    return StreamBuilder<Map<String, double>>(
-      stream: _cashSummaryStream,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
-        }
-        final data = snapshot.data!;
-        return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade300),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: [
-                  Icon(Icons.money, color: Colors.black, size: 20),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Tổng tiền mặt'.toUpperCase(),
-                    style: GoogleFonts.inter(
-                      color: const Color(0xFF45464D),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                CurrencyFormatter.format(data['today']!),
-                style: GoogleFonts.inter(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-              SizedBox(height: 12),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    data['diffPercent']! > 0
-                        ? Icons.trending_up
-                        : Icons.trending_down,
-                    color: data['diffPercent']! > 0
-                        ? AppColors.trendingUp
-                        : AppColors.trendingDown,
-                    size: 20,
-                  ),
-                  Text(
-                    "${data['diffPercent']!.toStringAsFixed(2)}% so với hôm qua",
-                    style: TextStyle(
-                      color: data['diffPercent']! > 0
-                          ? AppColors.trendingUp
-                          : AppColors.trendingDown,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 

@@ -5,50 +5,46 @@ class DailyTransactionDto {
   final String shipperId;
   final String shipperName;
   final Timestamp date;
-  final int totalAmount;
-  final int totalFree;
-  final bool feeConfirmed;
-  final bool bankConfirmed;
-  final String note;
+  final int amount;
+  final bool isFee;
+  final bool isDeposit;
+  final bool isReceived;
 
   DailyTransactionDto({
     this.id,
     required this.shipperId,
     required this.shipperName,
     required this.date,
-    required this.totalAmount,
-    required this.totalFree,
-    required this.feeConfirmed,
-    required this.bankConfirmed,
-    required this.note,
+    required this.amount,
+    required this.isFee,
+    required this.isDeposit,
+    required this.isReceived,
   });
 
   factory DailyTransactionDto.fromMap(Map<String, dynamic> map, {String? id}) {
     return DailyTransactionDto(
       id: id,
-      shipperId: map['shipperId'] as String,
-      shipperName: map['shipperName'] as String,
-      date: map['date'] as Timestamp,
-      totalAmount: map['totalAmount'] as int,
-      totalFree: map['totalFree'] as int,
-      feeConfirmed: map['feeConfirmed'] as bool,
-      bankConfirmed: map['bankConfirmed'] as bool,
-      note: map['note'] as String,
+      shipperId: map['shipperId'] as String? ?? '',
+      shipperName: map['shipperName'] as String? ?? '',
+      date: map['date'] as Timestamp? ?? Timestamp.now(),
+      amount: map['amount'] as int? ?? (map['totalAmount'] as int? ?? 0),
+      isFee: map['isFee'] as bool? ?? false,
+      isDeposit: map['isDeposit'] as bool? ?? false,
+      isReceived: map['isReceived'] as bool? ?? false,
     );
   }
 
   factory DailyTransactionDto.fromFirestore(DocumentSnapshot snapshot) {
-    final data = snapshot.data() as Map<String, dynamic>;
+    final data = snapshot.data() as Map<String, dynamic>? ?? {};
     return DailyTransactionDto(
       id: snapshot.id,
-      shipperId: data['shipperId'] as String,
-      shipperName: data['shipperName'] as String,
-      date: data['date'] as Timestamp,
-      totalAmount: data['totalAmount'] as int,
-      totalFree: data['totalFree'] as int,
-      feeConfirmed: data['feeConfirmed'] as bool,
-      bankConfirmed: data['bankConfirmed'] as bool,
-      note: data['note'] as String,
+      shipperId: data['shipperId'] as String? ?? '',
+      shipperName: data['shipperName'] as String? ?? '',
+      date: data['date'] as Timestamp? ?? Timestamp.now(),
+      amount: data['amount'] as int? ?? (data['totalAmount'] as int? ?? 0),
+      isFee: data['isFee'] as bool? ?? false,
+      isDeposit: data['isDeposit'] as bool? ?? false,
+      isReceived: data['isReceived'] as bool? ?? false,
     );
   }
 
@@ -57,11 +53,10 @@ class DailyTransactionDto {
       'shipperId': shipperId,
       'shipperName': shipperName,
       'date': date,
-      'totalAmount': totalAmount,
-      'totalFree': totalFree,
-      'feeConfirmed': feeConfirmed,
-      'bankConfirmed': bankConfirmed,
-      'note': note,
+      'amount': amount,
+      'isFee': isFee,
+      'isDeposit': isDeposit,
+      'isReceived': isReceived,
     };
   }
 
@@ -70,27 +65,25 @@ class DailyTransactionDto {
     String? shipperId,
     String? shipperName,
     Timestamp? date,
-    int? totalAmount,
-    int? totalFree,
-    bool? feeConfirmed,
-    bool? bankConfirmed,
-    String? note,
+    int? amount,
+    bool? isFee,
+    bool? isDeposit,
+    bool? isReceived,
   }) {
     return DailyTransactionDto(
       id: id ?? this.id,
       shipperId: shipperId ?? this.shipperId,
       shipperName: shipperName ?? this.shipperName,
       date: date ?? this.date,
-      totalAmount: totalAmount ?? this.totalAmount,
-      totalFree: totalFree ?? this.totalFree,
-      feeConfirmed: feeConfirmed ?? this.feeConfirmed,
-      bankConfirmed: bankConfirmed ?? this.bankConfirmed,
-      note: note ?? this.note,
+      amount: amount ?? this.amount,
+      isFee: isFee ?? this.isFee,
+      isDeposit: isDeposit ?? this.isDeposit,
+      isReceived: isReceived ?? this.isReceived,
     );
   }
 
   @override
   String toString() {
-    return 'DailyTransactionDto(id: $id, shipperId: $shipperId, date: $date, totalAmount: $totalAmount, totalFree: $totalFree, feeConfirmed: $feeConfirmed, bankConfirmed: $bankConfirmed, note: $note)';
+    return 'DailyTransactionDto(id: $id, shipperId: $shipperId, date: $date, amount: $amount, isFee: $isFee, isDeposit: $isDeposit, isReceived: $isReceived)';
   }
 }
